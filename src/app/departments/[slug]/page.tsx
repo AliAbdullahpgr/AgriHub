@@ -4,9 +4,7 @@ import { notFound, useParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { departments } from '@/data/departments';
-import { parseEquipmentDetails } from '@/ai/flows/parse-equipment-details';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import type { Equipment } from '@/lib/types';
 import {
   Card,
   CardContent,
@@ -26,7 +24,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { Skeleton } from '@/components/ui/skeleton';
 import {
   BarChart,
   Bar,
@@ -55,29 +52,11 @@ import {
   AlertCircle,
   Wrench,
   TreeDeciduous,
-  LandPlot
+  LandPlot,
+  Phone,
+  Tractor
 } from 'lucide-react';
-import { useEffect, useState, useMemo } from 'react';
-
-type Facility = {
-  name: string;
-  capacity?: number;
-  type?: string;
-};
-
-type HumanResource = {
-  name: string;
-  bps: string;
-  sanctioned: string;
-  inPosition: string;
-  vacant: string;
-  total: string;
-};
-
-type LandResource = {
-  label: string;
-  value: string;
-};
+import { useMemo } from 'react';
 
 // MNSUAM theme colors for charts
 const CHART_COLORS = [
@@ -86,102 +65,24 @@ const CHART_COLORS = [
   'hsl(25, 80%, 50%)',   // Orange
   'hsl(180, 40%, 40%)',  // Teal
   'hsl(90, 40%, 45%)',   // Light green
-  'hsl(0, 70%, 50%)',    // Red for vacant
+  'hsl(0, 70%, 50%)',    // Red for vacant/needs repair
 ];
 
-// Function to parse facilities from text
-const parseFacilities = (text: string): Facility[] => {
-  const facilities: Facility[] = [];
-  const lines = text.split('\n').filter((line) => line.trim() !== '' && !line.toLowerCase().includes('human resources'));
-
-  lines.forEach((line) => {
-    const match = line.match(
-      /(?:\d+-\s*)?(.*?)\s*\(Capacity\s*(\d+)\s*persons?\)/i
-    );
-    if (match) {
-      facilities.push({
-        name: match[1].trim(),
-        capacity: parseInt(match[2], 10),
-        type: 'Meeting/Training'
-      });
-    } else if (!line.toLowerCase().includes('following facilities')) {
-        const labMatch = line.match(/^\d+-\s*(.*?)\s*$/);
-        if(labMatch) {
-            facilities.push({ name: labMatch[1].trim(), type: 'Lab' });
-        } else if (!line.match(/^\s*$/) && !line.match(/block/i) && !line.match(/S\.T\.I\./i) && !line.match(/Genome/i) && !line.includes('Total area') && !line.includes('Cultivated area') && !line.includes('Non-cultivated area') && !line.includes('Building details') && !line.includes('Administrative office')) {
-            const name = line.replace(/^\d+[\.\-]?\s*/, '').trim();
-            if (name) facilities.push({ name, type: 'General' });
-        }
-    }
-  });
-
-  return facilities;
+const getStatusColor = (status?: string) => {
+  const s = status?.toLowerCase();
+  if (s === 'functional') return 'bg-green-600';
+  if (s === 'needs repair') return 'bg-amber-500';
+  if (s === 'required') return 'bg-blue-500';
+  if (s === 'not repairable') return 'bg-red-500';
+  return 'bg-gray-500';
 };
 
-const parseHumanResources = (text: string): HumanResource[] => {
-  const resources: HumanResource[] = [];
-  const lines = text.split('\n');
-  let startParsing = false;
-  
-  for (const line of lines) {
-    if (line.includes('Human Resources')) {
-      startParsing = true;
-      continue;
-    }
-    if (!startParsing || !line.trim() || line.includes('Sr. #')) continue;
-    if (line.includes('Total Staff')) break;
-
-    // Better parsing for human resources
-    const hrMatch = line.match(/-\s*(.*?)\s*\(BPS\s*(\d+)\)\s*:\s*(\d+)/i);
-    if (hrMatch) {
-      resources.push({
-        name: hrMatch[1].trim(),
-        bps: hrMatch[2],
-        sanctioned: hrMatch[3],
-        inPosition: hrMatch[3],
-        vacant: '0',
-        total: hrMatch[3],
-      });
-      continue;
-    }
-
-    const parts = line.split(/\s{2,}|(?<=\d)\s+(?=[A-Z])|(?<=[A-Za-z])\s+(?=\d)|(?<=\S)\s+(?=\-)/).filter(p => p.trim() && p.trim() !== '-');
-    const cleanedParts = parts.map(p => p.replace(/^\d+[\s\t]*/, '').trim()).filter(Boolean);
-
-    if(cleanedParts.length >= 5) {
-      resources.push({
-        name: cleanedParts[0],
-        bps: cleanedParts[1],
-        sanctioned: cleanedParts[2],
-        inPosition: cleanedParts[3],
-        vacant: cleanedParts.length > 4 ? cleanedParts[4] : '-',
-        total: cleanedParts[cleanedParts.length - 1],
-      });
-    }
-  }
-
-  return resources;
+const getStatusIcon = (status?: string) => {
+  const s = status?.toLowerCase();
+  if (s === 'functional') return <CheckCircle2 className="h-3 w-3 mr-1" />;
+  if (s === 'needs repair') return <Wrench className="h-3 w-3 mr-1" />;
+  return <AlertCircle className="h-3 w-3 mr-1" />;
 };
-
-const parseLandResources = (text: string): LandResource[] => {
-  const resources: LandResource[] = [];
-  const lines = text.split('\n');
-  
-  for (const line of lines) {
-    if (line.includes('Total area:')) {
-      resources.push({ label: 'Total Area', value: line.split(':')[1]?.trim() || '' });
-    } else if (line.includes('Cultivated area:')) {
-      resources.push({ label: 'Cultivated Area', value: line.split(':')[1]?.trim() || '' });
-    } else if (line.includes('Non-cultivated area')) {
-      resources.push({ label: 'Non-cultivated Area', value: line.split(':')[1]?.trim() || '' });
-    } else if (line.includes('Administrative office:')) {
-      resources.push({ label: 'Administrative Office', value: line.split(':')[1]?.trim() || '' });
-    }
-  }
-  
-  return resources;
-};
-
 
 export default function DepartmentPage() {
   const params = useParams();
@@ -189,43 +90,28 @@ export default function DepartmentPage() {
   
   const department = useMemo(() => departments.find((d) => d.slug === slug), [slug]);
 
-  const [equipment, setEquipment] = useState<Equipment[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    if (department?.equipment) {
-      setIsLoading(true);
-      parseEquipmentDetails({ text: department.equipment })
-        .then(parsedEquipment => {
-          setEquipment(parsedEquipment);
-        })
-        .catch(error => {
-          console.error('Failed to parse equipment details:', error);
-        })
-        .finally(() => {
-            setIsLoading(false);
-        });
-    } else {
-        setIsLoading(false);
-    }
-  }, [department]);
-
-  if (!isLoading && !department) {
+  if (!department) {
     notFound();
   }
-  
-  const facilities = department?.facilities ? parseFacilities(department.facilities) : [];
-  const humanResources = department?.facilities ? parseHumanResources(department.facilities) : [];
-  const landResources = department?.facilities ? parseLandResources(department.facilities) : [];
 
   const getImage = (imageId: string) => {
     return PlaceHolderImages.find((img) => img.id === imageId);
   };
   
-  const departmentImage = department ? getImage(department.imageId) : null;
+  const departmentImage = getImage(department.imageId);
+
+  // Get structured data
+  const equipmentList = department.equipmentList || [];
+  const facilitiesList = department.facilitiesList || [];
+  const humanResources = department.humanResources || [];
+  const landResources = department.landResources || [];
+  const farmMachinery = department.farmMachinery || [];
+
+  // Check if department has data
+  const hasData = equipmentList.length > 0 || facilitiesList.length > 0 || humanResources.length > 0 || landResources.length > 0 || farmMachinery.length > 0;
 
   // Equipment status distribution for pie chart
-  const equipmentStatusData = equipment.reduce((acc, item) => {
+  const equipmentStatusData = equipmentList.reduce((acc, item) => {
     const status = item.status || 'Unknown';
     const existing = acc.find(d => d.name === status);
     if (existing) {
@@ -236,53 +122,41 @@ export default function DepartmentPage() {
     return acc;
   }, [] as { name: string; value: number }[]);
 
-  // Equipment by lab/category for bar chart
-  const equipmentByCategory = equipment.reduce((acc, item) => {
-    const category = item.location || 'General';
-    const existing = acc.find(d => d.name === category);
+  // Equipment by location for bar chart
+  const equipmentByLocation = equipmentList.reduce((acc, item) => {
+    const location = item.location || 'General';
+    const existing = acc.find(d => d.name === location);
     if (existing) {
       existing.count += item.quantity;
     } else {
-      acc.push({ name: category, count: item.quantity });
+      acc.push({ name: location, count: item.quantity });
     }
     return acc;
   }, [] as { name: string; count: number }[]);
 
+  // Human resources chart data
   const humanResourcesChartData = humanResources.map(resource => ({
-    name: resource.name.length > 15 ? resource.name.substring(0, 15) + '...' : resource.name,
-    fullName: resource.name,
-    'In Position': parseInt(resource.inPosition, 10) || 0,
-    Vacant: parseInt(resource.vacant, 10) || 0,
-  })).filter(d => d['In Position'] > 0 || d.Vacant > 0);
+    name: resource.position.length > 20 ? resource.position.substring(0, 20) + '...' : resource.position,
+    fullName: resource.position,
+    'Filled': resource.filled,
+    'Vacant': resource.vacant,
+  })).filter(d => d['Filled'] > 0 || d.Vacant > 0);
 
   // Calculate totals
-  const totalEquipment = equipment.reduce((sum, item) => sum + item.quantity, 0);
-  const totalStaff = humanResources.reduce((sum, item) => sum + (parseInt(item.total, 10) || 0), 0);
-  const functionalEquipment = equipment.filter(e => e.status?.toLowerCase() === 'functional').reduce((sum, item) => sum + item.quantity, 0);
+  const totalEquipment = equipmentList.reduce((sum, item) => sum + item.quantity, 0);
+  const totalMachinery = farmMachinery.reduce((sum, item) => sum + item.quantity, 0);
+  const totalSanctioned = humanResources.reduce((sum, item) => sum + item.sanctioned, 0);
+  const totalStaff = humanResources.reduce((sum, item) => sum + item.filled, 0);
+  const totalVacant = humanResources.reduce((sum, item) => sum + item.vacant, 0);
+  const functionalEquipment = equipmentList.filter(e => e.status?.toLowerCase() === 'functional').reduce((sum, item) => sum + item.quantity, 0);
   const functionalPercentage = totalEquipment > 0 ? Math.round((functionalEquipment / totalEquipment) * 100) : 0;
+  const functionalMachinery = farmMachinery.filter(e => e.status?.toLowerCase() === 'functional').reduce((sum, item) => sum + item.quantity, 0);
 
-
-  if (isLoading) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="space-y-6">
-          <Skeleton className="h-12 w-1/2" />
-          <Skeleton className="h-6 w-1/3" />
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Skeleton className="h-40" />
-            <Skeleton className="h-40" />
-            <Skeleton className="h-40" />
-          </div>
-        </div>
-      </div>
-    );
-  }
-  
-  if (!department) {
-    return null;
-  }
-
-  const hasData = department.equipment || department.facilities;
+  // Determine active tabs
+  const showEquipmentTab = equipmentList.length > 0 || farmMachinery.length > 0;
+  const showFacilitiesTab = facilitiesList.length > 0 || landResources.length > 0;
+  const showStaffTab = humanResources.length > 0;
+  const showAnalyticsTab = hasData;
 
   return (
     <div className="min-h-screen bg-background">
@@ -313,6 +187,12 @@ export default function DepartmentPage() {
                 <MapPin className="h-5 w-5" />
                 <span className="text-lg">{department.university}</span>
               </div>
+              {department.address && (
+                <div className="flex items-center gap-2 text-primary-foreground/80">
+                  <MapPin className="h-4 w-4" />
+                  <span>{department.address}</span>
+                </div>
+              )}
               <p className="text-primary-foreground/80 text-lg max-w-2xl">
                 {department.description}
               </p>
@@ -325,15 +205,21 @@ export default function DepartmentPage() {
                       <div className="bg-secondary/20 rounded-full p-3">
                         <User className="h-6 w-6" />
                       </div>
-                      <div>
+                      <div className="space-y-1">
                         <p className="font-semibold">{department.contact.focalPerson}</p>
                         <a
                           href={`mailto:${department.contact.email}`}
-                          className="text-secondary hover:underline flex items-center gap-1"
+                          className="text-secondary hover:underline flex items-center gap-1 text-sm"
                         >
                           <Mail className="h-4 w-4" />
                           {department.contact.email}
                         </a>
+                        {department.contact.phone && (
+                          <p className="flex items-center gap-1 text-sm text-primary-foreground/80">
+                            <Phone className="h-4 w-4" />
+                            {department.contact.phone}
+                          </p>
+                        )}
                       </div>
                     </div>
                   </CardContent>
@@ -369,61 +255,103 @@ export default function DepartmentPage() {
       {hasData && (
         <div className="container mx-auto px-4 -mt-4 relative z-10 mb-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Card className="stat-card">
-              <CardContent className="pt-4 pb-4">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-primary/10">
-                    <FlaskConical className="h-5 w-5 text-primary" />
+            {totalEquipment > 0 && (
+              <Card className="stat-card">
+                <CardContent className="pt-4 pb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-primary/10">
+                      <FlaskConical className="h-5 w-5 text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-2xl font-bold text-primary">{totalEquipment}</p>
+                      <p className="text-xs text-muted-foreground">Equipment Items</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-2xl font-bold text-primary">{totalEquipment}</p>
-                    <p className="text-xs text-muted-foreground">Total Equipment</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            )}
             
-            <Card className="stat-card">
-              <CardContent className="pt-4 pb-4">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-green-500/10">
-                    <CheckCircle2 className="h-5 w-5 text-green-600" />
+            {totalEquipment > 0 && (
+              <Card className="stat-card">
+                <CardContent className="pt-4 pb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-green-500/10">
+                      <CheckCircle2 className="h-5 w-5 text-green-600" />
+                    </div>
+                    <div>
+                      <p className="text-2xl font-bold text-green-600">{functionalPercentage}%</p>
+                      <p className="text-xs text-muted-foreground">Functional</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-2xl font-bold text-green-600">{functionalPercentage}%</p>
-                    <p className="text-xs text-muted-foreground">Functional</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            )}
             
-            <Card className="stat-card">
-              <CardContent className="pt-4 pb-4">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-secondary/10">
-                    <Users className="h-5 w-5 text-secondary" />
+            {totalStaff > 0 && (
+              <Card className="stat-card">
+                <CardContent className="pt-4 pb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-secondary/10">
+                      <Users className="h-5 w-5 text-secondary" />
+                    </div>
+                    <div>
+                      <p className="text-2xl font-bold text-secondary">{totalStaff}</p>
+                      <p className="text-xs text-muted-foreground">Staff Members</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-2xl font-bold text-secondary">{totalStaff}</p>
-                    <p className="text-xs text-muted-foreground">Staff Members</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            )}
             
-            <Card className="stat-card">
-              <CardContent className="pt-4 pb-4">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-accent/10">
-                    <Building className="h-5 w-5 text-accent" />
+            {facilitiesList.length > 0 && (
+              <Card className="stat-card">
+                <CardContent className="pt-4 pb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-accent/10">
+                      <Building className="h-5 w-5 text-accent" />
+                    </div>
+                    <div>
+                      <p className="text-2xl font-bold text-accent">{facilitiesList.length}</p>
+                      <p className="text-xs text-muted-foreground">Facilities</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-2xl font-bold text-accent">{facilities.length}</p>
-                    <p className="text-xs text-muted-foreground">Facilities</p>
+                </CardContent>
+              </Card>
+            )}
+
+            {landResources.length > 0 && (
+              <Card className="stat-card">
+                <CardContent className="pt-4 pb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-green-600/10">
+                      <LandPlot className="h-5 w-5 text-green-600" />
+                    </div>
+                    <div>
+                      <p className="text-2xl font-bold text-green-600">
+                        {landResources.find(l => l.label === 'Total Area')?.value || `${landResources[0]?.acres || 0} acres`}
+                      </p>
+                      <p className="text-xs text-muted-foreground">Land Area</p>
+                    </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            )}
+
+            {totalMachinery > 0 && (
+              <Card className="stat-card">
+                <CardContent className="pt-4 pb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-amber-500/10">
+                      <Tractor className="h-5 w-5 text-amber-600" />
+                    </div>
+                    <div>
+                      <p className="text-2xl font-bold text-amber-600">{totalMachinery}</p>
+                      <p className="text-xs text-muted-foreground">Farm Machinery</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
       )}
@@ -431,57 +359,179 @@ export default function DepartmentPage() {
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
         {hasData ? (
-          <Tabs defaultValue="equipment" className="w-full">
+          <Tabs defaultValue={showEquipmentTab ? "equipment" : showFacilitiesTab ? "facilities" : "staff"} className="w-full">
             <TabsList className="grid w-full max-w-2xl mx-auto grid-cols-4 mb-8">
-              <TabsTrigger value="equipment" className="text-sm">
-                <FlaskConical className="mr-2 h-4 w-4 hidden sm:inline" />
-                Equipment
-              </TabsTrigger>
-              <TabsTrigger value="facilities" className="text-sm">
-                <Building className="mr-2 h-4 w-4 hidden sm:inline" />
-                Facilities
-              </TabsTrigger>
-              <TabsTrigger value="staff" className="text-sm">
-                <Users className="mr-2 h-4 w-4 hidden sm:inline" />
-                Staff
-              </TabsTrigger>
-              <TabsTrigger value="analytics" className="text-sm">
-                <LayoutGrid className="mr-2 h-4 w-4 hidden sm:inline" />
-                Analytics
-              </TabsTrigger>
+              {showEquipmentTab && (
+                <TabsTrigger value="equipment" className="text-sm">
+                  <FlaskConical className="mr-2 h-4 w-4 hidden sm:inline" />
+                  Equipment
+                </TabsTrigger>
+              )}
+              {showFacilitiesTab && (
+                <TabsTrigger value="facilities" className="text-sm">
+                  <Building className="mr-2 h-4 w-4 hidden sm:inline" />
+                  Facilities
+                </TabsTrigger>
+              )}
+              {showStaffTab && (
+                <TabsTrigger value="staff" className="text-sm">
+                  <Users className="mr-2 h-4 w-4 hidden sm:inline" />
+                  Staff
+                </TabsTrigger>
+              )}
+              {showAnalyticsTab && (
+                <TabsTrigger value="analytics" className="text-sm">
+                  <LayoutGrid className="mr-2 h-4 w-4 hidden sm:inline" />
+                  Analytics
+                </TabsTrigger>
+              )}
             </TabsList>
             
             {/* Equipment Tab */}
-            <TabsContent value="equipment" className="space-y-6">
-              <div className="grid lg:grid-cols-3 gap-6">
-                {/* Equipment Table */}
-                <Card className="lg:col-span-2">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <ClipboardList className="h-5 w-5 text-primary" />
-                      Equipment Inventory
-                    </CardTitle>
-                    <CardDescription>
-                      Complete list of laboratory and field equipment
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    {equipment.length > 0 ? (
-                      <div className="overflow-x-auto">
+            {showEquipmentTab && (
+              <TabsContent value="equipment" className="space-y-6">
+                <div className="grid lg:grid-cols-3 gap-6">
+                  {/* Equipment Table */}
+                  <Card className="lg:col-span-2">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <ClipboardList className="h-5 w-5 text-primary" />
+                        Equipment Inventory
+                      </CardTitle>
+                      <CardDescription>
+                        Complete list of laboratory and field equipment
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      {equipmentList.length > 0 ? (
+                        <div className="overflow-x-auto max-h-[500px] overflow-y-auto">
+                          <Table>
+                            <TableHeader>
+                              <TableRow>
+                                <TableHead className="w-[40%]">Equipment Name</TableHead>
+                                <TableHead>Location</TableHead>
+                                <TableHead className="text-center">Qty</TableHead>
+                                <TableHead>Status</TableHead>
+                              </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                              {equipmentList.map((item, index) => (
+                                <TableRow key={index}>
+                                  <TableCell className="font-medium">
+                                    <div className="flex items-center gap-2">
+                                      <Wrench className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                                      {item.name}
+                                    </div>
+                                  </TableCell>
+                                  <TableCell className="text-muted-foreground text-sm">
+                                    {item.location || '-'}
+                                  </TableCell>
+                                  <TableCell className="text-center">
+                                    <Badge variant="outline">{item.quantity}</Badge>
+                                  </TableCell>
+                                  <TableCell>
+                                    <Badge className={getStatusColor(item.status)}>
+                                      {getStatusIcon(item.status)}
+                                      {item.status || 'Unknown'}
+                                    </Badge>
+                                  </TableCell>
+                                </TableRow>
+                              ))}
+                            </TableBody>
+                          </Table>
+                        </div>
+                      ) : (
+                        <p className="text-muted-foreground text-center py-8">No equipment data available.</p>
+                      )}
+                    </CardContent>
+                  </Card>
+
+                  {/* Equipment Status Pie Chart */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Boxes className="h-5 w-5 text-primary" />
+                        Status Distribution
+                      </CardTitle>
+                      <CardDescription>
+                        Equipment by operational status
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      {equipmentStatusData.length > 0 ? (
+                        <ResponsiveContainer width="100%" height={250}>
+                          <PieChart>
+                            <Pie
+                              data={equipmentStatusData}
+                              cx="50%"
+                              cy="50%"
+                              innerRadius={50}
+                              outerRadius={80}
+                              paddingAngle={5}
+                              dataKey="value"
+                              label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                            >
+                              {equipmentStatusData.map((entry, index) => (
+                                <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                              ))}
+                            </Pie>
+                            <Tooltip 
+                              contentStyle={{ 
+                                backgroundColor: 'hsl(var(--background))', 
+                                border: '1px solid hsl(var(--border))',
+                                borderRadius: '8px'
+                              }}
+                            />
+                          </PieChart>
+                        </ResponsiveContainer>
+                      ) : (
+                        <p className="text-muted-foreground text-center py-8">No data available.</p>
+                      )}
+                      
+                      {/* Legend */}
+                      <div className="flex flex-wrap gap-3 justify-center mt-4">
+                        {equipmentStatusData.map((entry, index) => (
+                          <div key={entry.name} className="flex items-center gap-2">
+                            <div 
+                              className="w-3 h-3 rounded-full" 
+                              style={{ backgroundColor: CHART_COLORS[index % CHART_COLORS.length] }}
+                            />
+                            <span className="text-sm text-muted-foreground">{entry.name}: {entry.value}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Farm Machinery Section */}
+                {farmMachinery.length > 0 && (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Tractor className="h-5 w-5 text-amber-600" />
+                        Farm Machinery
+                      </CardTitle>
+                      <CardDescription>
+                        Agricultural machinery and implements
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="overflow-x-auto max-h-[400px] overflow-y-auto">
                         <Table>
                           <TableHeader>
                             <TableRow>
-                              <TableHead className="w-[50%]">Equipment Name</TableHead>
-                              <TableHead className="text-center">Qty</TableHead>
+                              <TableHead className="w-[50%]">Machinery Name</TableHead>
+                              <TableHead className="text-center">Quantity</TableHead>
                               <TableHead>Status</TableHead>
                             </TableRow>
                           </TableHeader>
                           <TableBody>
-                            {equipment.map((item, index) => (
+                            {farmMachinery.map((item, index) => (
                               <TableRow key={index}>
                                 <TableCell className="font-medium">
                                   <div className="flex items-center gap-2">
-                                    <Wrench className="h-4 w-4 text-muted-foreground" />
+                                    <Tractor className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                                     {item.name}
                                   </div>
                                 </TableCell>
@@ -489,12 +539,8 @@ export default function DepartmentPage() {
                                   <Badge variant="outline">{item.quantity}</Badge>
                                 </TableCell>
                                 <TableCell>
-                                  <Badge 
-                                    variant={item.status?.toLowerCase() === 'functional' ? 'default' : 'secondary'}
-                                    className={item.status?.toLowerCase() === 'functional' ? 'bg-green-600' : ''}
-                                  >
-                                    {item.status?.toLowerCase() === 'functional' && <CheckCircle2 className="h-3 w-3 mr-1" />}
-                                    {item.status?.toLowerCase() !== 'functional' && <AlertCircle className="h-3 w-3 mr-1" />}
+                                  <Badge className={getStatusColor(item.status)}>
+                                    {getStatusIcon(item.status)}
                                     {item.status || 'Unknown'}
                                   </Badge>
                                 </TableCell>
@@ -503,141 +549,127 @@ export default function DepartmentPage() {
                           </TableBody>
                         </Table>
                       </div>
-                    ) : (
-                      <p className="text-muted-foreground text-center py-8">No equipment data available.</p>
-                    )}
-                  </CardContent>
-                </Card>
-
-                {/* Equipment Status Pie Chart */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Boxes className="h-5 w-5 text-primary" />
-                      Status Distribution
-                    </CardTitle>
-                    <CardDescription>
-                      Equipment by operational status
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    {equipmentStatusData.length > 0 ? (
-                      <ResponsiveContainer width="100%" height={250}>
-                        <PieChart>
-                          <Pie
-                            data={equipmentStatusData}
-                            cx="50%"
-                            cy="50%"
-                            innerRadius={50}
-                            outerRadius={80}
-                            paddingAngle={5}
-                            dataKey="value"
-                            label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                          >
-                            {equipmentStatusData.map((entry, index) => (
-                              <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
-                            ))}
-                          </Pie>
-                          <Tooltip 
-                            contentStyle={{ 
-                              backgroundColor: 'hsl(var(--background))', 
-                              border: '1px solid hsl(var(--border))',
-                              borderRadius: '8px'
-                            }}
-                          />
-                        </PieChart>
-                      </ResponsiveContainer>
-                    ) : (
-                      <p className="text-muted-foreground text-center py-8">No data available.</p>
-                    )}
-                    
-                    {/* Legend */}
-                    <div className="flex flex-wrap gap-3 justify-center mt-4">
-                      {equipmentStatusData.map((entry, index) => (
-                        <div key={entry.name} className="flex items-center gap-2">
-                          <div 
-                            className="w-3 h-3 rounded-full" 
-                            style={{ backgroundColor: CHART_COLORS[index % CHART_COLORS.length] }}
-                          />
-                          <span className="text-sm text-muted-foreground">{entry.name}: {entry.value}</span>
+                      
+                      {/* Machinery Stats */}
+                      <div className="mt-4 grid grid-cols-2 gap-4">
+                        <div className="p-4 rounded-lg bg-green-50 dark:bg-green-950 text-center">
+                          <p className="text-3xl font-bold text-green-600">{functionalMachinery}</p>
+                          <p className="text-sm text-green-600/80">Functional</p>
                         </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </TabsContent>
-            
-            {/* Facilities Tab */}
-            <TabsContent value="facilities" className="space-y-6">
-              <div className="grid md:grid-cols-2 gap-6">
-                {/* Land Resources */}
-                {landResources.length > 0 && (
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <LandPlot className="h-5 w-5 text-primary" />
-                        Land Resources
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-4">
-                        {landResources.map((resource, index) => (
-                          <div key={index} className="flex justify-between items-center p-3 rounded-lg bg-muted/50">
-                            <span className="text-muted-foreground">{resource.label}</span>
-                            <Badge variant="secondary" className="font-semibold">{resource.value}</Badge>
-                          </div>
-                        ))}
+                        <div className="p-4 rounded-lg bg-amber-50 dark:bg-amber-950 text-center">
+                          <p className="text-3xl font-bold text-amber-600">{totalMachinery - functionalMachinery}</p>
+                          <p className="text-sm text-amber-600/80">Needs Attention</p>
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
                 )}
-
-                {/* Facilities List */}
-                <Card className={landResources.length === 0 ? 'md:col-span-2' : ''}>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Building className="h-5 w-5 text-primary" />
-                      Available Facilities
-                    </CardTitle>
-                    <CardDescription>
-                      Meeting rooms, training halls, and laboratories
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    {facilities.length > 0 ? (
-                      <div className="grid gap-3">
-                        {facilities.map((facility, index) => (
-                          <div 
-                            key={index} 
-                            className="flex justify-between items-center p-4 rounded-lg border bg-card hover:bg-muted/50 transition-colors"
-                          >
-                            <div className="flex items-center gap-3">
-                              <div className="p-2 rounded-lg bg-primary/10">
-                                <Building className="h-4 w-4 text-primary" />
-                              </div>
-                              <span className="font-medium">{facility.name}</span>
+              </TabsContent>
+            )}
+            
+            {/* Facilities Tab */}
+            {showFacilitiesTab && (
+              <TabsContent value="facilities" className="space-y-6">
+                <div className="grid md:grid-cols-2 gap-6">
+                  {/* Land Resources */}
+                  {landResources.length > 0 && (
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                          <LandPlot className="h-5 w-5 text-primary" />
+                          Land Resources
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-4">
+                          {landResources.map((resource, index) => (
+                            <div key={index} className="flex justify-between items-center p-3 rounded-lg bg-muted/50">
+                              <span className="text-muted-foreground">{resource.label}</span>
+                              <Badge variant="secondary" className="font-semibold">{resource.value}</Badge>
                             </div>
-                            {facility.capacity && (
-                              <Badge className="bg-secondary text-secondary-foreground">
-                                <Users className="h-3 w-3 mr-1" />
-                                {facility.capacity} persons
-                              </Badge>
-                            )}
+                          ))}
+                        </div>
+                        
+                        {/* Land visualization */}
+                        {landResources.some(r => r.acres) && (
+                          <div className="mt-6">
+                            <ResponsiveContainer width="100%" height={200}>
+                              <PieChart>
+                                <Pie
+                                  data={landResources.filter(r => r.acres).map(r => ({ name: r.label, value: r.acres }))}
+                                  cx="50%"
+                                  cy="50%"
+                                  outerRadius={70}
+                                  dataKey="value"
+                                  label={({ name, value }) => `${name}: ${value} acres`}
+                                >
+                                  {landResources.map((entry, index) => (
+                                    <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                                  ))}
+                                </Pie>
+                                <Tooltip />
+                              </PieChart>
+                            </ResponsiveContainer>
                           </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="text-muted-foreground text-center py-8">No facilities data available.</p>
-                    )}
-                  </CardContent>
-                </Card>
-              </div>
-            </TabsContent>
+                        )}
+                      </CardContent>
+                    </Card>
+                  )}
+
+                  {/* Facilities List */}
+                  <Card className={landResources.length === 0 ? 'md:col-span-2' : ''}>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Building className="h-5 w-5 text-primary" />
+                        Available Facilities
+                      </CardTitle>
+                      <CardDescription>
+                        Buildings, meeting rooms, laboratories, and amenities
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      {facilitiesList.length > 0 ? (
+                        <div className="grid gap-3 max-h-[400px] overflow-y-auto">
+                          {facilitiesList.map((facility, index) => (
+                            <div 
+                              key={index} 
+                              className="flex justify-between items-center p-4 rounded-lg border bg-card hover:bg-muted/50 transition-colors"
+                            >
+                              <div className="flex items-center gap-3">
+                                <div className="p-2 rounded-lg bg-primary/10">
+                                  <Building className="h-4 w-4 text-primary" />
+                                </div>
+                                <div>
+                                  <span className="font-medium">{facility.name}</span>
+                                  {facility.type && (
+                                    <p className="text-xs text-muted-foreground">{facility.type}</p>
+                                  )}
+                                  {facility.details && (
+                                    <p className="text-xs text-muted-foreground">{facility.details}</p>
+                                  )}
+                                </div>
+                              </div>
+                              {facility.capacity && (
+                                <Badge className="bg-secondary text-secondary-foreground">
+                                  <Users className="h-3 w-3 mr-1" />
+                                  {facility.capacity} {typeof facility.capacity === 'number' && facility.capacity > 1 ? 'persons' : 'unit'}
+                                </Badge>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-muted-foreground text-center py-8">No facilities data available.</p>
+                      )}
+                    </CardContent>
+                  </Card>
+                </div>
+              </TabsContent>
+            )}
             
             {/* Staff Tab */}
-            <TabsContent value="staff" className="space-y-6">
-              {humanResources.length > 0 ? (
+            {showStaffTab && (
+              <TabsContent value="staff" className="space-y-6">
                 <div className="grid lg:grid-cols-2 gap-6">
                   {/* Staff Table */}
                   <Card>
@@ -651,24 +683,34 @@ export default function DepartmentPage() {
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <div className="overflow-x-auto">
+                      <div className="overflow-x-auto max-h-[400px] overflow-y-auto">
                         <Table>
                           <TableHeader>
                             <TableRow>
                               <TableHead>Position</TableHead>
                               <TableHead className="text-center">BPS</TableHead>
-                              <TableHead className="text-center">Count</TableHead>
+                              <TableHead className="text-center">Sanctioned</TableHead>
+                              <TableHead className="text-center">Filled</TableHead>
+                              <TableHead className="text-center">Vacant</TableHead>
                             </TableRow>
                           </TableHeader>
                           <TableBody>
                             {humanResources.map((resource, index) => (
                               <TableRow key={index}>
-                                <TableCell className="font-medium">{resource.name}</TableCell>
+                                <TableCell className="font-medium">{resource.position}</TableCell>
                                 <TableCell className="text-center">
                                   <Badge variant="outline">BPS-{resource.bps}</Badge>
                                 </TableCell>
+                                <TableCell className="text-center">{resource.sanctioned}</TableCell>
                                 <TableCell className="text-center">
-                                  <Badge className="bg-primary">{resource.total}</Badge>
+                                  <Badge className="bg-green-600">{resource.filled}</Badge>
+                                </TableCell>
+                                <TableCell className="text-center">
+                                  {resource.vacant > 0 ? (
+                                    <Badge variant="destructive">{resource.vacant}</Badge>
+                                  ) : (
+                                    <span className="text-muted-foreground">0</span>
+                                  )}
                                 </TableCell>
                               </TableRow>
                             ))}
@@ -676,10 +718,20 @@ export default function DepartmentPage() {
                         </Table>
                       </div>
                       
-                      {/* Total Staff */}
-                      <div className="mt-4 p-4 rounded-lg bg-primary/10 flex justify-between items-center">
-                        <span className="font-semibold text-primary">Total Staff</span>
-                        <Badge className="bg-primary text-lg px-4 py-1">{totalStaff}</Badge>
+                      {/* Totals */}
+                      <div className="mt-4 grid grid-cols-3 gap-4">
+                        <div className="p-3 rounded-lg bg-blue-50 dark:bg-blue-950 text-center">
+                          <p className="text-2xl font-bold text-blue-600">{totalSanctioned}</p>
+                          <p className="text-xs text-blue-600/80">Sanctioned</p>
+                        </div>
+                        <div className="p-3 rounded-lg bg-green-50 dark:bg-green-950 text-center">
+                          <p className="text-2xl font-bold text-green-600">{totalStaff}</p>
+                          <p className="text-xs text-green-600/80">Filled</p>
+                        </div>
+                        <div className="p-3 rounded-lg bg-red-50 dark:bg-red-950 text-center">
+                          <p className="text-2xl font-bold text-red-600">{totalVacant}</p>
+                          <p className="text-xs text-red-600/80">Vacant</p>
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
@@ -689,164 +741,189 @@ export default function DepartmentPage() {
                     <CardHeader>
                       <CardTitle>Staff Distribution</CardTitle>
                       <CardDescription>
-                        Visual breakdown of positions
+                        Filled vs Vacant positions
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <ResponsiveContainer width="100%" height={350}>
-                        <BarChart 
-                          data={humanResourcesChartData} 
-                          layout="vertical"
-                          margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
-                        >
-                          <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
-                          <XAxis type="number" allowDecimals={false} />
-                          <YAxis 
-                            type="category" 
-                            dataKey="name" 
-                            width={100}
-                            tick={{ fontSize: 12 }}
-                          />
-                          <Tooltip 
-                            contentStyle={{ 
-                              backgroundColor: 'hsl(var(--background))', 
-                              border: '1px solid hsl(var(--border))',
-                              borderRadius: '8px'
-                            }}
-                            formatter={(value, name, props) => [value, name]}
-                            labelFormatter={(label, payload) => payload?.[0]?.payload?.fullName || label}
-                          />
-                          <Legend />
-                          <Bar dataKey="In Position" fill={CHART_COLORS[0]} radius={[0, 4, 4, 0]} />
-                          {humanResourcesChartData.some(d => d.Vacant > 0) && (
+                      {humanResourcesChartData.length > 0 ? (
+                        <ResponsiveContainer width="100%" height={350}>
+                          <BarChart 
+                            data={humanResourcesChartData.slice(0, 10)} 
+                            layout="vertical"
+                            margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
+                          >
+                            <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
+                            <XAxis type="number" allowDecimals={false} />
+                            <YAxis 
+                              type="category" 
+                              dataKey="name" 
+                              width={120}
+                              tick={{ fontSize: 11 }}
+                            />
+                            <Tooltip 
+                              contentStyle={{ 
+                                backgroundColor: 'hsl(var(--background))', 
+                                border: '1px solid hsl(var(--border))',
+                                borderRadius: '8px'
+                              }}
+                              formatter={(value, name) => [value, name]}
+                              labelFormatter={(label, payload) => payload?.[0]?.payload?.fullName || label}
+                            />
+                            <Legend />
+                            <Bar dataKey="Filled" fill={CHART_COLORS[0]} radius={[0, 4, 4, 0]} />
                             <Bar dataKey="Vacant" fill={CHART_COLORS[5]} radius={[0, 4, 4, 0]} />
-                          )}
-                        </BarChart>
-                      </ResponsiveContainer>
+                          </BarChart>
+                        </ResponsiveContainer>
+                      ) : (
+                        <p className="text-muted-foreground text-center py-8">No chart data available.</p>
+                      )}
+                      
+                      {/* Position Fill Rate */}
+                      <div className="mt-4 space-y-2">
+                        <div className="flex justify-between text-sm">
+                          <span>Position Fill Rate</span>
+                          <span className="font-semibold">{totalSanctioned > 0 ? Math.round((totalStaff / totalSanctioned) * 100) : 0}%</span>
+                        </div>
+                        <Progress value={totalSanctioned > 0 ? (totalStaff / totalSanctioned) * 100 : 0} className="h-3" />
+                      </div>
                     </CardContent>
                   </Card>
                 </div>
-              ) : (
-                <Card>
-                  <CardContent className="py-12">
-                    <p className="text-muted-foreground text-center">No human resources data available.</p>
-                  </CardContent>
-                </Card>
-              )}
-            </TabsContent>
+              </TabsContent>
+            )}
             
             {/* Analytics Tab */}
-            <TabsContent value="analytics" className="space-y-6">
-              <div className="grid md:grid-cols-2 gap-6">
-                {/* Equipment Status Overview */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Equipment Overview</CardTitle>
-                    <CardDescription>Summary statistics</CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span>Functional Equipment</span>
-                        <span className="font-semibold">{functionalPercentage}%</span>
-                      </div>
-                      <Progress value={functionalPercentage} className="h-3" />
-                    </div>
-                    
-                    <div className="grid grid-cols-2 gap-4 mt-6">
-                      <div className="p-4 rounded-lg bg-green-50 dark:bg-green-950 text-center">
-                        <p className="text-3xl font-bold text-green-600">{functionalEquipment}</p>
-                        <p className="text-sm text-green-600/80">Functional</p>
-                      </div>
-                      <div className="p-4 rounded-lg bg-amber-50 dark:bg-amber-950 text-center">
-                        <p className="text-3xl font-bold text-amber-600">{totalEquipment - functionalEquipment}</p>
-                        <p className="text-sm text-amber-600/80">Other Status</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Department Summary */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Department Summary</CardTitle>
-                    <CardDescription>Key metrics at a glance</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                        <div className="flex items-center gap-3">
-                          <FlaskConical className="h-5 w-5 text-primary" />
-                          <span>Total Equipment Items</span>
-                        </div>
-                        <Badge variant="secondary" className="text-lg">{totalEquipment}</Badge>
-                      </div>
-                      
-                      <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                        <div className="flex items-center gap-3">
-                          <Users className="h-5 w-5 text-secondary" />
-                          <span>Total Staff</span>
-                        </div>
-                        <Badge variant="secondary" className="text-lg">{totalStaff}</Badge>
-                      </div>
-                      
-                      <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                        <div className="flex items-center gap-3">
-                          <Building className="h-5 w-5 text-accent" />
-                          <span>Available Facilities</span>
-                        </div>
-                        <Badge variant="secondary" className="text-lg">{facilities.length}</Badge>
-                      </div>
-                      
-                      {landResources.length > 0 && (
-                        <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                          <div className="flex items-center gap-3">
-                            <TreeDeciduous className="h-5 w-5 text-green-600" />
-                            <span>Land Area</span>
+            {showAnalyticsTab && (
+              <TabsContent value="analytics" className="space-y-6">
+                <div className="grid md:grid-cols-2 gap-6">
+                  {/* Equipment Status Overview */}
+                  {totalEquipment > 0 && (
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Equipment Overview</CardTitle>
+                        <CardDescription>Summary statistics</CardDescription>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <div className="space-y-2">
+                          <div className="flex justify-between text-sm">
+                            <span>Functional Equipment</span>
+                            <span className="font-semibold">{functionalPercentage}%</span>
                           </div>
-                          <Badge variant="secondary" className="text-lg">
-                            {landResources.find(l => l.label === 'Total Area')?.value || 'N/A'}
-                          </Badge>
+                          <Progress value={functionalPercentage} className="h-3" />
                         </div>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
+                        
+                        <div className="grid grid-cols-2 gap-4 mt-6">
+                          <div className="p-4 rounded-lg bg-green-50 dark:bg-green-950 text-center">
+                            <p className="text-3xl font-bold text-green-600">{functionalEquipment}</p>
+                            <p className="text-sm text-green-600/80">Functional</p>
+                          </div>
+                          <div className="p-4 rounded-lg bg-amber-50 dark:bg-amber-950 text-center">
+                            <p className="text-3xl font-bold text-amber-600">{totalEquipment - functionalEquipment}</p>
+                            <p className="text-sm text-amber-600/80">Other Status</p>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
 
-                {/* Equipment by Category Chart */}
-                {equipmentByCategory.length > 0 && (
-                  <Card className="md:col-span-2">
+                  {/* Department Summary */}
+                  <Card>
                     <CardHeader>
-                      <CardTitle>Equipment by Category</CardTitle>
-                      <CardDescription>Distribution across different labs/sections</CardDescription>
+                      <CardTitle>Department Summary</CardTitle>
+                      <CardDescription>Key metrics at a glance</CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <ResponsiveContainer width="100%" height={300}>
-                        <BarChart data={equipmentByCategory}>
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis 
-                            dataKey="name" 
-                            tick={{ fontSize: 12 }}
-                            angle={-20}
-                            textAnchor="end"
-                            height={80}
-                          />
-                          <YAxis allowDecimals={false} />
-                          <Tooltip 
-                            contentStyle={{ 
-                              backgroundColor: 'hsl(var(--background))', 
-                              border: '1px solid hsl(var(--border))',
-                              borderRadius: '8px'
-                            }}
-                          />
-                          <Bar dataKey="count" fill={CHART_COLORS[0]} radius={[4, 4, 0, 0]} name="Equipment Count" />
-                        </BarChart>
-                      </ResponsiveContainer>
+                      <div className="space-y-4">
+                        {totalEquipment > 0 && (
+                          <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                            <div className="flex items-center gap-3">
+                              <FlaskConical className="h-5 w-5 text-primary" />
+                              <span>Total Equipment Items</span>
+                            </div>
+                            <Badge variant="secondary" className="text-lg">{totalEquipment}</Badge>
+                          </div>
+                        )}
+                        
+                        {totalMachinery > 0 && (
+                          <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                            <div className="flex items-center gap-3">
+                              <Tractor className="h-5 w-5 text-amber-600" />
+                              <span>Farm Machinery</span>
+                            </div>
+                            <Badge variant="secondary" className="text-lg">{totalMachinery}</Badge>
+                          </div>
+                        )}
+                        
+                        {totalStaff > 0 && (
+                          <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                            <div className="flex items-center gap-3">
+                              <Users className="h-5 w-5 text-secondary" />
+                              <span>Staff (Filled / Sanctioned)</span>
+                            </div>
+                            <Badge variant="secondary" className="text-lg">{totalStaff} / {totalSanctioned}</Badge>
+                          </div>
+                        )}
+                        
+                        {facilitiesList.length > 0 && (
+                          <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                            <div className="flex items-center gap-3">
+                              <Building className="h-5 w-5 text-accent" />
+                              <span>Available Facilities</span>
+                            </div>
+                            <Badge variant="secondary" className="text-lg">{facilitiesList.length}</Badge>
+                          </div>
+                        )}
+                        
+                        {landResources.length > 0 && (
+                          <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                            <div className="flex items-center gap-3">
+                              <TreeDeciduous className="h-5 w-5 text-green-600" />
+                              <span>Land Area</span>
+                            </div>
+                            <Badge variant="secondary" className="text-lg">
+                              {landResources.find(l => l.label === 'Total Area')?.value || `${landResources[0]?.acres || 0} acres`}
+                            </Badge>
+                          </div>
+                        )}
+                      </div>
                     </CardContent>
                   </Card>
-                )}
-              </div>
-            </TabsContent>
+
+                  {/* Equipment by Location Chart */}
+                  {equipmentByLocation.length > 1 && (
+                    <Card className="md:col-span-2">
+                      <CardHeader>
+                        <CardTitle>Equipment by Location</CardTitle>
+                        <CardDescription>Distribution across different labs/sections</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <ResponsiveContainer width="100%" height={300}>
+                          <BarChart data={equipmentByLocation}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis 
+                              dataKey="name" 
+                              tick={{ fontSize: 12 }}
+                              angle={-20}
+                              textAnchor="end"
+                              height={80}
+                            />
+                            <YAxis allowDecimals={false} />
+                            <Tooltip 
+                              contentStyle={{ 
+                                backgroundColor: 'hsl(var(--background))', 
+                                border: '1px solid hsl(var(--border))',
+                                borderRadius: '8px'
+                              }}
+                            />
+                            <Bar dataKey="count" fill={CHART_COLORS[0]} radius={[4, 4, 0, 0]} name="Equipment Count" />
+                          </BarChart>
+                        </ResponsiveContainer>
+                      </CardContent>
+                    </Card>
+                  )}
+                </div>
+              </TabsContent>
+            )}
           </Tabs>
         ) : (
           <Card className="max-w-2xl mx-auto">
@@ -857,8 +934,8 @@ export default function DepartmentPage() {
                 Detailed equipment and facility information for this department has not been added yet.
               </p>
               <Button asChild>
-                <Link href="/data-parser">
-                  Use Data Parser to Add Information
+                <Link href="/">
+                  Browse Other Departments
                 </Link>
               </Button>
             </CardContent>

@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Wheat, Menu, Building2, FlaskConical, Home, Microscope, BarChart3 } from 'lucide-react';
+import { Wheat, Menu, Building2, Home, Microscope } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Sheet,
@@ -47,14 +47,6 @@ export function Header() {
               <Microscope className="h-4 w-4" />
               Institutes
             </NavLink>
-            <NavLink href="/#statistics">
-              <BarChart3 className="h-4 w-4" />
-              Statistics
-            </NavLink>
-            <NavLink href="/data-parser">
-              <FlaskConical className="h-4 w-4" />
-              Data Parser
-            </NavLink>
           </nav>
         </div>
 
@@ -99,14 +91,6 @@ export function Header() {
                 <Link href="/institutes" className="flex items-center gap-3 text-foreground hover:text-primary transition-colors p-2 rounded-lg hover:bg-muted">
                   <Microscope className="h-5 w-5" />
                   Institutes
-                </Link>
-                <Link href="/#statistics" className="flex items-center gap-3 text-foreground hover:text-primary transition-colors p-2 rounded-lg hover:bg-muted">
-                  <BarChart3 className="h-5 w-5" />
-                  Statistics
-                </Link>
-                <Link href="/data-parser" className="flex items-center gap-3 text-foreground hover:text-primary transition-colors p-2 rounded-lg hover:bg-muted">
-                  <FlaskConical className="h-5 w-5" />
-                  Data Parser
                 </Link>
               </nav>
               

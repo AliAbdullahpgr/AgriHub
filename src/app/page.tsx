@@ -23,7 +23,8 @@ import {
   Search,
   BarChart3,
   Microscope,
-  TreeDeciduous
+  TreeDeciduous,
+  Tractor
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 
@@ -31,8 +32,10 @@ import { Input } from '@/components/ui/input';
 const stats = {
   totalDepartments: departments.length,
   totalInstitutes: institutes.length,
-  departmentsWithEquipment: departments.filter(d => d.equipment).length,
-  universities: [...new Set(departments.map(d => d.university))].length,
+  departmentsWithData: departments.filter(d => d.equipmentList?.length || d.humanResources?.length || d.facilitiesList?.length).length,
+  totalEquipment: departments.reduce((sum, d) => sum + (d.equipmentList?.reduce((s, e) => s + e.quantity, 0) || 0), 0),
+  totalMachinery: departments.reduce((sum, d) => sum + (d.farmMachinery?.reduce((s, e) => s + e.quantity, 0) || 0), 0),
+  totalStaff: departments.reduce((sum, d) => sum + (d.humanResources?.reduce((s, hr) => s + hr.filled, 0) || 0), 0),
 };
 
 export default function Home() {
@@ -113,9 +116,9 @@ export default function Home() {
                   </Link>
                 </Button>
                 <Button asChild size="lg" variant="outline" className="border-white/30 bg-white/10 hover:bg-white/20">
-                  <Link href="#statistics">
-                    <BarChart3 className="mr-2 h-5 w-5" />
-                    View Statistics
+                  <Link href="/institutes">
+                    <Microscope className="mr-2 h-5 w-5" />
+                    View Institutes
                   </Link>
                 </Button>
               </div>
@@ -145,44 +148,64 @@ export default function Home() {
               </p>
             </div>
             
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
               <Card className="stat-card card-hover text-center">
                 <CardContent className="pt-6">
-                  <div className="mx-auto w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                    <Building2 className="h-7 w-7 text-primary" />
+                  <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-3">
+                    <Building2 className="h-6 w-6 text-primary" />
                   </div>
-                  <p className="text-4xl font-bold text-primary">{stats.totalDepartments}</p>
-                  <p className="text-sm text-muted-foreground mt-1">Departments</p>
+                  <p className="text-3xl font-bold text-primary">{stats.totalDepartments}</p>
+                  <p className="text-xs text-muted-foreground mt-1">Departments</p>
                 </CardContent>
               </Card>
               
               <Card className="stat-card card-hover text-center">
                 <CardContent className="pt-6">
-                  <div className="mx-auto w-14 h-14 rounded-full bg-secondary/10 flex items-center justify-center mb-4">
-                    <Microscope className="h-7 w-7 text-secondary" />
+                  <div className="mx-auto w-12 h-12 rounded-full bg-secondary/10 flex items-center justify-center mb-3">
+                    <Microscope className="h-6 w-6 text-secondary" />
                   </div>
-                  <p className="text-4xl font-bold text-secondary">{stats.totalInstitutes}</p>
-                  <p className="text-sm text-muted-foreground mt-1">Research Institutes</p>
+                  <p className="text-3xl font-bold text-secondary">{stats.totalInstitutes}</p>
+                  <p className="text-xs text-muted-foreground mt-1">Institutes</p>
                 </CardContent>
               </Card>
               
               <Card className="stat-card card-hover text-center">
                 <CardContent className="pt-6">
-                  <div className="mx-auto w-14 h-14 rounded-full bg-accent/10 flex items-center justify-center mb-4">
-                    <FlaskConical className="h-7 w-7 text-accent" />
+                  <div className="mx-auto w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mb-3">
+                    <FlaskConical className="h-6 w-6 text-accent" />
                   </div>
-                  <p className="text-4xl font-bold text-accent">{stats.departmentsWithEquipment}</p>
-                  <p className="text-sm text-muted-foreground mt-1">Labs with Equipment</p>
+                  <p className="text-3xl font-bold text-accent">{stats.totalEquipment}</p>
+                  <p className="text-xs text-muted-foreground mt-1">Equipment Items</p>
                 </CardContent>
               </Card>
               
               <Card className="stat-card card-hover text-center">
                 <CardContent className="pt-6">
-                  <div className="mx-auto w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                    <Users className="h-7 w-7 text-primary" />
+                  <div className="mx-auto w-12 h-12 rounded-full bg-amber-500/10 flex items-center justify-center mb-3">
+                    <Tractor className="h-6 w-6 text-amber-600" />
                   </div>
-                  <p className="text-4xl font-bold text-primary">{stats.universities}</p>
-                  <p className="text-sm text-muted-foreground mt-1">Partner Universities</p>
+                  <p className="text-3xl font-bold text-amber-600">{stats.totalMachinery}</p>
+                  <p className="text-xs text-muted-foreground mt-1">Farm Machinery</p>
+                </CardContent>
+              </Card>
+              
+              <Card className="stat-card card-hover text-center">
+                <CardContent className="pt-6">
+                  <div className="mx-auto w-12 h-12 rounded-full bg-green-500/10 flex items-center justify-center mb-3">
+                    <Users className="h-6 w-6 text-green-600" />
+                  </div>
+                  <p className="text-3xl font-bold text-green-600">{stats.totalStaff}</p>
+                  <p className="text-xs text-muted-foreground mt-1">Staff Members</p>
+                </CardContent>
+              </Card>
+              
+              <Card className="stat-card card-hover text-center">
+                <CardContent className="pt-6">
+                  <div className="mx-auto w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center mb-3">
+                    <BarChart3 className="h-6 w-6 text-blue-600" />
+                  </div>
+                  <p className="text-3xl font-bold text-blue-600">{stats.departmentsWithData}</p>
+                  <p className="text-xs text-muted-foreground mt-1">With Full Data</p>
                 </CardContent>
               </Card>
             </div>
@@ -264,8 +287,8 @@ export default function Home() {
                   </div>
                 </div>
                 <Button asChild size="lg" className="mt-4">
-                  <Link href="/data-parser">
-                    Explore Data Parser
+                  <Link href="#departments">
+                    Browse All Departments
                     <ChevronRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
@@ -306,7 +329,7 @@ export default function Home() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                   {departments.map((dept) => {
                     const image = getImage(dept.imageId);
-                    const hasData = dept.equipment || dept.facilities;
+                    const hasData = dept.equipmentList?.length || dept.humanResources?.length || dept.facilitiesList?.length;
                     return (
                       <Card
                         key={dept.id}
@@ -411,23 +434,29 @@ export default function Home() {
         <section className="py-16 gradient-agriculture text-primary-foreground">
           <div className="container text-center">
             <h2 className="text-3xl md:text-4xl font-bold font-headline mb-4">
-              Need to Parse Your Data?
+              Explore Agricultural Resources
             </h2>
             <p className="text-lg opacity-90 max-w-2xl mx-auto mb-8">
-              Use our AI-powered data parser to extract structured information from 
-              your equipment lists and facility documents.
+              Discover comprehensive data on equipment, facilities, and human resources 
+              across agricultural departments and research institutes in South Punjab.
             </p>
-            <Button asChild size="lg" className="bg-secondary text-secondary-foreground hover:bg-secondary/90">
-              <Link href="/data-parser">
-                <FlaskConical className="mr-2 h-5 w-5" />
-                Open Data Parser
-              </Link>
-            </Button>
+            <div className="flex flex-wrap gap-4 justify-center">
+              <Button asChild size="lg" className="bg-secondary text-secondary-foreground hover:bg-secondary/90">
+                <Link href="#departments">
+                  <Building2 className="mr-2 h-5 w-5" />
+                  View All Departments
+                </Link>
+              </Button>
+              <Button asChild size="lg" variant="outline" className="border-white/30 bg-white/10 hover:bg-white/20">
+                <Link href="/institutes">
+                  <Microscope className="mr-2 h-5 w-5" />
+                  View Institutes
+                </Link>
+              </Button>
+            </div>
           </div>
         </section>
       </main>
     </div>
   );
 }
-
-    

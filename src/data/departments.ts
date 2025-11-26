@@ -10,115 +10,492 @@ export const departments: Department[] = [
     description: 'Focuses on the science of food, from production to consumption, including value addition, food analysis, and processing technologies.',
     contact: {
       focalPerson: 'Dr. Shabbir Ahmad',
-      email: 'Shabbir.ahmad@mnsuam.edu.pk',
+      email: 'shabbir.ahmad@mnsuam.edu.pk',
     },
-    equipment: `
-      Value Addition and Food Analysis Lab (Room # 127, Academic Block)
-      Quantity: 1 and Functional.
-      1. Kjeldhal Apparatus (Digestion unit and Distillation unit)
-      2. Water Activity meter
-      3. Soxhlet Apparatus
-      4. Analytical Weighing Balance
-      5. Autoclave
-      6. Texture Analyzer
-      7. Freeze Dryer
-      8. Pulse Electric Field
-      9. Ozonation chamber
-      10. Pasteurizer
-      11. Fermenter
-
-      Nutrient Analytical & Food Processing Lab (Room # 114-115, Postgraduate Block)
-      1. Kjeldhal Apparatus (Digestion unit and Distillation unit)
-      2. Moisture Analyzer
-      3. Soxhlet Apparatus
-      4. Analytical Weighing Balance
-      5. Muffle Furnace
-      6. Viscometer
-      7. Farinograph
-      8. Fume Hood
-      9. Desiccator
-      10. Gerber machine
-      11. Rose head machine
-      12. Abrasive peeler
-      13. Refrigerator
-      14. China Chakki
-      15. Grinder
-      16. Cheese press
-      17. Cheese vat
-      18. Cream separator
-    `,
-    facilities: `
-      Following facilities available in MNSUAM can be utilized for South Punjab Regional Agriculture Forum.
-      Admin block
-      1- Syndicate Hall for meeting (Capacity 50 persons)
-      2- Committee Room for meeting (Capacity 20 persons)
-      Academic block
-      3- Lecture Hall 110 (Capacity 150 persons)
-      4- Lecture Hall 132 (Capacity 96 persons)
-      5- Computer Lab (05 Labs)
-      S.T.I. Library
-      6- Training Hall (40 persons), extendable to 80 persons
-      Genome Centre / UNESCO Chair
-      7- meeting room (15 Capacity persons)
-      Graduate Block / A block
-      8- Sybrid Hall for training (Capacity 30 person)
-      9- Executive Hall-I (Capacity 35 persons)
-      10- Lecture Hall (Capacity 35 persons)
-      11- ORIC Meeting Hall (Capacity 30 persons)
-      12- QEC meeting Hall (Capacity 12 persons)
-      All the halls and meeting rooms are fully air conditioned and connected with back-up power supply.
-    `,
+    equipmentList: [
+      // Value Addition and Food Analysis Lab (Room #127, Academic Block)
+      { name: 'Kjeldhal Apparatus (Digestion & Distillation unit)', quantity: 1, status: 'Functional', location: 'Value Addition Lab' },
+      { name: 'Water Activity Meter', quantity: 1, status: 'Functional', location: 'Value Addition Lab' },
+      { name: 'Soxhlet Apparatus', quantity: 1, status: 'Functional', location: 'Value Addition Lab' },
+      { name: 'Analytical Weighing Balance', quantity: 1, status: 'Functional', location: 'Value Addition Lab' },
+      { name: 'Autoclave', quantity: 1, status: 'Functional', location: 'Value Addition Lab' },
+      { name: 'Texture Analyzer', quantity: 1, status: 'Functional', location: 'Value Addition Lab' },
+      { name: 'Freeze Dryer', quantity: 1, status: 'Functional', location: 'Value Addition Lab' },
+      { name: 'Pulse Electric Field', quantity: 1, status: 'Functional', location: 'Value Addition Lab' },
+      { name: 'Ozonation Chamber', quantity: 1, status: 'Functional', location: 'Value Addition Lab' },
+      { name: 'Pasteurizer', quantity: 1, status: 'Functional', location: 'Value Addition Lab' },
+      { name: 'Fermenter', quantity: 1, status: 'Functional', location: 'Value Addition Lab' },
+      // Nutrient Analytical & Food Processing Lab (Room #114-115, Postgraduate Block)
+      { name: 'Kjeldhal Apparatus (Digestion & Distillation unit)', quantity: 1, status: 'Functional', location: 'Nutrient Analytical Lab' },
+      { name: 'Moisture Analyzer', quantity: 1, status: 'Functional', location: 'Nutrient Analytical Lab' },
+      { name: 'Soxhlet Apparatus', quantity: 1, status: 'Functional', location: 'Nutrient Analytical Lab' },
+      { name: 'Analytical Weighing Balance', quantity: 1, status: 'Functional', location: 'Nutrient Analytical Lab' },
+      { name: 'Muffle Furnace', quantity: 1, status: 'Functional', location: 'Nutrient Analytical Lab' },
+      { name: 'Viscometer', quantity: 1, status: 'Functional', location: 'Nutrient Analytical Lab' },
+      { name: 'Farinograph', quantity: 1, status: 'Functional', location: 'Nutrient Analytical Lab' },
+      { name: 'Fume Hood', quantity: 1, status: 'Functional', location: 'Nutrient Analytical Lab' },
+      { name: 'Desiccator', quantity: 1, status: 'Functional', location: 'Nutrient Analytical Lab' },
+      { name: 'Gerber Machine', quantity: 1, status: 'Functional', location: 'Nutrient Analytical Lab' },
+      { name: 'Rose Head Machine', quantity: 1, status: 'Functional', location: 'Nutrient Analytical Lab' },
+      { name: 'Abrasive Peeler', quantity: 1, status: 'Functional', location: 'Nutrient Analytical Lab' },
+      { name: 'Refrigerator', quantity: 1, status: 'Functional', location: 'Nutrient Analytical Lab' },
+      { name: 'China Chakki', quantity: 1, status: 'Functional', location: 'Nutrient Analytical Lab' },
+      { name: 'Grinder', quantity: 1, status: 'Functional', location: 'Nutrient Analytical Lab' },
+      { name: 'Cheese Press', quantity: 1, status: 'Functional', location: 'Nutrient Analytical Lab' },
+      { name: 'Cheese Vat', quantity: 1, status: 'Functional', location: 'Nutrient Analytical Lab' },
+      { name: 'Cream Separator', quantity: 1, status: 'Functional', location: 'Nutrient Analytical Lab' },
+    ],
+    facilitiesList: [
+      { name: 'Value Addition and Food Analysis Lab', type: 'Laboratory', details: 'Room #127, Academic Block' },
+      { name: 'Nutrient Analytical & Food Processing Lab', type: 'Laboratory', details: 'Room #114-115, Postgraduate Block' },
+    ],
   },
   {
     id: '2',
     slug: 'agronomy',
-    name: 'Agronomy',
-    university: 'University of Agriculture, Faisalabad',
+    name: 'Agronomy Department',
+    university: 'MNS University of Agriculture, Multan',
     imageId: 'agri-2',
     description: 'The science and technology of producing and using plants for food, fuel, fiber, and land reclamation.',
+    contact: {
+      focalPerson: 'Dr. Mahmood Alam',
+      email: 'mahmood.alam@mnsuam.edu.pk',
+    },
+    equipmentList: [
+      { name: 'Analytical Balance', quantity: 1, status: 'Functional', location: 'Agronomy Lab' },
+      { name: 'Digital Balance', quantity: 3, status: 'Functional', location: 'Agronomy Lab' },
+      { name: 'Top Loading Balance', quantity: 2, status: 'Functional', location: 'Agronomy Lab' },
+      { name: 'Leaf Area Meter', quantity: 1, status: 'Functional', location: 'Agronomy Lab' },
+      { name: 'Flame Photometer', quantity: 1, status: 'Functional', location: 'Agronomy Lab' },
+      { name: 'SPAD Meter', quantity: 1, status: 'Functional', location: 'Agronomy Lab' },
+      { name: 'pH Meter', quantity: 1, status: 'Functional', location: 'Agronomy Lab' },
+      { name: 'EC Meter', quantity: 1, status: 'Functional', location: 'Agronomy Lab' },
+      { name: 'Autoclave', quantity: 1, status: 'Functional', location: 'Agronomy Lab' },
+      { name: 'Cooling Incubator', quantity: 1, status: 'Functional', location: 'Agronomy Lab' },
+      { name: 'Oven', quantity: 2, status: 'Functional', location: 'Agronomy Lab' },
+      { name: 'Trinocular Microscope', quantity: 1, status: 'Functional', location: 'Agronomy Lab' },
+      { name: 'Hot Plate & Magnetic Stirrer', quantity: 2, status: 'Functional', location: 'Agronomy Lab' },
+      { name: 'Moisture Meter', quantity: 1, status: 'Functional', location: 'Agronomy Lab' },
+      { name: 'Water Distillation Unit', quantity: 1, status: 'Functional', location: 'Agronomy Lab' },
+      { name: 'Water Bath', quantity: 1, status: 'Functional', location: 'Agronomy Lab' },
+      { name: 'Mini Centrifuge Machine', quantity: 1, status: 'Functional', location: 'Agronomy Lab' },
+      { name: 'Spectrophotometer', quantity: 1, status: 'Functional', location: 'Agronomy Lab' },
+      { name: 'Seed Grinder', quantity: 1, status: 'Functional', location: 'Agronomy Lab' },
+      { name: 'Kjeldahl Apparatus', quantity: 1, status: 'Functional', location: 'Agronomy Lab' },
+      { name: 'Digital Vernier Caliper', quantity: 1, status: 'Functional', location: 'Agronomy Lab' },
+      { name: 'Aquarium Pump', quantity: 2, status: 'Functional', location: 'Agronomy Lab' },
+    ],
+    facilitiesList: [
+      { name: 'Agronomy Research Laboratory', type: 'Laboratory' },
+      { name: 'Directorate of University Farms', type: 'Field Research' },
+    ],
   },
   {
     id: '3',
+    slug: 'floriculture-research-sub-station',
+    name: 'Floriculture Research Sub-station',
+    university: 'Horticultural Research Sub-station, Multan',
+    imageId: 'agri-3',
+    description: 'A sub-station focused on floriculture and landscaping research, specializing in flower cultivation and ornamental plants.',
+    address: 'Old Shujabad Road, Multan',
+    contact: {
+      focalPerson: 'Dr. Muhammad Muzamil Ijaz',
+      email: 'muzamil.ijaz243@gmail.com',
+      phone: '0301-6984364',
+    },
+    landResources: [
+      { label: 'Total Area', value: '7.50 acres', acres: 7.5 },
+      { label: 'Cultivated Area', value: '6.5 acres', acres: 6.5 },
+      { label: 'Non-cultivated Area', value: '1.0 acre', acres: 1.0 },
+    ],
+    farmMachinery: [
+      { name: 'Power Sprayer', quantity: 1, status: 'Functional' },
+      { name: 'Brush Cutter', quantity: 1, status: 'Functional' },
+      { name: 'Mini Rotavator', quantity: 1, status: 'Functional' },
+    ],
+    equipmentList: [
+      { name: 'Digital Balance', quantity: 1, status: 'Functional', location: 'Lab' },
+      { name: 'Hydro Distillation Unit', quantity: 1, status: 'Functional', location: 'Lab' },
+    ],
+    facilitiesList: [
+      { name: 'Administrative Office', type: 'Building', details: '3.5 marla' },
+    ],
+    humanResources: [
+      { position: 'Assistant Horticulturist', bps: 18, sanctioned: 1, filled: 1, vacant: 0 },
+      { position: 'Assistant Research Officer', bps: 17, sanctioned: 1, filled: 1, vacant: 0 },
+      { position: 'Senior Clerk', bps: 14, sanctioned: 1, filled: 1, vacant: 0 },
+      { position: 'Budder', bps: 8, sanctioned: 2, filled: 2, vacant: 0 },
+      { position: 'Jeep Driver', bps: 6, sanctioned: 1, filled: 1, vacant: 0 },
+      { position: 'Tractor Driver', bps: 8, sanctioned: 1, filled: 1, vacant: 0 },
+      { position: 'Mali', bps: 5, sanctioned: 2, filled: 2, vacant: 0 },
+      { position: 'Beldars', bps: 1, sanctioned: 7, filled: 7, vacant: 0 },
+      { position: 'Chowkidar', bps: 1, sanctioned: 2, filled: 2, vacant: 0 },
+      { position: 'Naib Qasid', bps: 5, sanctioned: 1, filled: 1, vacant: 0 },
+      { position: 'Sweeper', bps: 2, sanctioned: 1, filled: 1, vacant: 0 },
+    ],
+  },
+  {
+    id: '4',
+    slug: 'soil-water-testing-lab',
+    name: 'Soil & Water Testing Laboratory',
+    university: 'Agriculture Department Punjab',
+    imageId: 'agri-5',
+    description: 'Studies the properties of soil and its relationship with the environment, providing soil and water testing services for research and farmers.',
+    address: 'Govt. Agricultural Farm, Old Shujabad Road, Multan',
+    contact: {
+      focalPerson: 'Ms. Fatima Bibi',
+      email: 'swt_mltn@yahoo.com',
+      phone: '061-4423568',
+    },
+    coordinates: {
+      latitude: 28.652145,
+      longitude: 70.694682,
+    },
+    equipmentList: [
+      { name: 'Photo Copier', quantity: 1, status: 'Required' },
+      { name: 'Air Conditioner 1.5 ton Split', quantity: 4, status: 'Required' },
+      { name: 'Drying Oven', quantity: 1, status: 'Required' },
+      { name: 'Digital Thermo-hygrometer', quantity: 4, status: 'Required' },
+      { name: 'Electronic Digital Balance (4 decimal)', quantity: 4, status: 'Required' },
+      { name: 'Block Digesters (20 Heads)', quantity: 2, status: 'Required' },
+      { name: 'Centrifuge (4000 RPM)', quantity: 2, status: 'Required' },
+      { name: 'Electric Distilleries', quantity: 3, status: 'Required' },
+      { name: 'Reverse Osmosis Plant', quantity: 1, status: 'Required' },
+      { name: 'Furnace (Up to 500°C)', quantity: 1, status: 'Required' },
+      { name: 'N Distillation Unit', quantity: 2, status: 'Required' },
+      { name: 'Refrigerator', quantity: 2, status: 'Required' },
+      { name: 'Steel Cupboards', quantity: 8, status: 'Required' },
+      { name: 'Flame Photometer', quantity: 1, status: 'Required' },
+      { name: 'Spectrophotometer', quantity: 1, status: 'Required' },
+      { name: 'Magnetic Stirrer', quantity: 4, status: 'Required' },
+      { name: 'Steel Almirah', quantity: 8, status: 'Required' },
+      { name: 'Fume Hood', quantity: 1, status: 'Required' },
+      { name: 'Vehicle Hilux Double Cabin', quantity: 1, status: 'Required' },
+      { name: 'Multi Media', quantity: 1, status: 'Required' },
+    ],
+    humanResources: [
+      { position: 'Scientific Officer (Lab)', bps: 17, sanctioned: 2, filled: 0, vacant: 2 },
+      { position: 'Law Officer', bps: 17, sanctioned: 1, filled: 0, vacant: 1 },
+      { position: 'Quality & Technical Manager ISO 17025', bps: 17, sanctioned: 2, filled: 0, vacant: 2 },
+      { position: 'Instrument Technician', bps: 16, sanctioned: 1, filled: 0, vacant: 1 },
+      { position: 'Office Assistant', bps: 16, sanctioned: 1, filled: 0, vacant: 1 },
+      { position: 'Instruments Engineer', bps: 16, sanctioned: 1, filled: 0, vacant: 1 },
+      { position: 'Computer Operator', bps: 15, sanctioned: 1, filled: 0, vacant: 1 },
+      { position: 'Senior Clerk', bps: 14, sanctioned: 1, filled: 0, vacant: 1 },
+      { position: 'Junior Clerk', bps: 11, sanctioned: 2, filled: 0, vacant: 2 },
+      { position: 'Accounts Clerk', bps: 11, sanctioned: 1, filled: 0, vacant: 1 },
+      { position: 'Lab Assistant', bps: 6, sanctioned: 2, filled: 0, vacant: 2 },
+      { position: 'Lab Attendant', bps: 1, sanctioned: 4, filled: 0, vacant: 4 },
+      { position: 'Store Keeper', bps: 11, sanctioned: 1, filled: 0, vacant: 1 },
+      { position: 'Vehicle Driver', bps: 4, sanctioned: 2, filled: 0, vacant: 2 },
+      { position: 'Naib Qasid', bps: 1, sanctioned: 1, filled: 0, vacant: 1 },
+      { position: 'Chowkidar', bps: 1, sanctioned: 1, filled: 0, vacant: 1 },
+      { position: 'Sweeper', bps: 1, sanctioned: 1, filled: 0, vacant: 1 },
+    ],
+    facilitiesList: [
+      { name: 'Office Building', type: 'Planned' },
+      { name: 'Stores', type: 'Planned' },
+      { name: 'Garages', type: 'Planned' },
+      { name: 'Residence BPS 18-19', type: 'Planned', capacity: 1 },
+      { name: 'Residence BPS 15-17', type: 'Planned', capacity: 2 },
+      { name: 'Residence C Category', type: 'Planned', capacity: 4 },
+      { name: 'Guard Room', type: 'Planned' },
+    ],
+  },
+  {
+    id: '5',
+    slug: 'entomology-research-sub-station',
+    name: 'Entomology Research Sub-Station',
+    university: 'Agriculture Department Punjab',
+    imageId: 'agri-6',
+    description: 'The scientific study of insects, focusing on pest management and agricultural entomology research.',
+    address: 'ERSS Multan',
+    landResources: [
+      { label: 'Total Area', value: '3.5 acres', acres: 3.5 },
+    ],
+    equipmentList: [
+      { name: 'Light Microscope', quantity: 1, status: 'Functional' },
+      { name: 'Binocular Microscope', quantity: 1, status: 'Functional' },
+      { name: 'Binocular Stereo Microscope', quantity: 1, status: 'Functional' },
+      { name: 'Magnetic Stirrer', quantity: 1, status: 'Functional' },
+      { name: 'Micro Pipette', quantity: 3, status: 'Functional' },
+      { name: 'Micro Liter Syringe Hamilton', quantity: 3, status: 'Functional' },
+      { name: 'Incubator TV 100', quantity: 1, status: 'Functional' },
+      { name: 'Low Temperature Incubator', quantity: 2, status: 'Functional' },
+      { name: 'Air Conditioner Cooling Deluxe', quantity: 1, status: 'Functional' },
+      { name: 'Refrigerator 2-in-one Temperature Incubator', quantity: 1, status: 'Functional' },
+      { name: 'Swift Stereo SM 80', quantity: 1, status: 'Functional' },
+      { name: 'Anesthesia Chamber', quantity: 1, status: 'Functional' },
+      { name: 'Deep Freezer', quantity: 1, status: 'Functional' },
+      { name: 'Generator', quantity: 1, status: 'Functional' },
+      { name: 'ULV Sprayer', quantity: 2, status: 'Functional' },
+      { name: 'Computer + Printer', quantity: 1, status: 'Functional' },
+      { name: 'Printer Laser Jet M26-A', quantity: 1, status: 'Functional' },
+      { name: 'Electronic Digital Camera (Sony)', quantity: 1, status: 'Functional' },
+      { name: 'Motor Cycle', quantity: 1, status: 'Functional' },
+      { name: 'Biometric Machine', quantity: 1, status: 'Functional' },
+      { name: 'Knap Sack Sprayer', quantity: 1, status: 'Functional' },
+      { name: 'Triple Beam Balance', quantity: 1, status: 'Not Repairable' },
+      { name: 'Magnifying Lens', quantity: 1, status: 'Functional' },
+      { name: 'Maximum and Minimum Thermometer', quantity: 1, status: 'Functional' },
+      { name: 'Thermo Control Packing Hot & Cool Chamber', quantity: 1, status: 'Functional' },
+      { name: 'Humidifier Jet Cool Super Asia', quantity: 1, status: 'Functional' },
+      { name: 'Petri-Dishes 40ml', quantity: 200, status: 'Functional' },
+      { name: 'Petri-Dishes for Whitefly', quantity: 250, status: 'Functional' },
+      { name: 'Insect Collection Vials', quantity: 200, status: 'Functional' },
+      { name: 'Insect Collection Boxes', quantity: 4, status: 'Functional' },
+    ],
+    humanResources: [
+      { position: 'Officers', bps: 17, sanctioned: 3, filled: 3, vacant: 0 },
+      { position: 'Officials', bps: 11, sanctioned: 2, filled: 2, vacant: 0 },
+    ],
+    facilitiesList: [
+      { name: 'Office Rooms', type: 'Building', capacity: 5 },
+    ],
+  },
+  {
+    id: '6',
+    slug: 'mango-research-institute',
+    name: 'Mango Research Institute',
+    university: 'Agriculture Department Punjab',
+    imageId: 'agri-3',
+    description: 'Leading research institute dedicated to mango cultivation, post-harvest technology, and variety development.',
+    address: 'Old Shujabad Road, Multan',
+    contact: {
+      focalPerson: 'Mr. Abid Hameed Khan',
+      email: 'abidhameedkhan@yahoo.com',
+      phone: '0300-6326987',
+    },
+    landResources: [
+      { label: 'Total Area', value: '32 Acres', acres: 32 },
+      { label: 'Roads & Buildings', value: '9 Acres', acres: 9 },
+      { label: 'Direct Cultivated Area', value: '23 Acres', acres: 23 },
+    ],
+    farmMachinery: [
+      { name: 'Tractor', quantity: 1, status: 'Functional' },
+      { name: 'Tractor Trolley', quantity: 1, status: 'Functional' },
+      { name: 'Cultivator', quantity: 1, status: 'Functional' },
+      { name: 'Rotavator', quantity: 2, status: 'Functional' },
+      { name: 'Weeds Slasher', quantity: 1, status: 'Functional' },
+      { name: 'Air Blast Sprayer', quantity: 1, status: 'Functional' },
+      { name: 'Nozzle Sprayer', quantity: 1, status: 'Functional' },
+      { name: 'Water Bowser', quantity: 1, status: 'Functional' },
+      { name: 'Border Disc', quantity: 1, status: 'Functional' },
+      { name: 'Electric Lawn Mower', quantity: 1, status: 'Functional' },
+      { name: 'Manual Lawn Mower', quantity: 1, status: 'Functional' },
+      { name: 'Soil Rotary Tiller', quantity: 1, status: 'Functional' },
+      { name: 'Rear Blade', quantity: 1, status: 'Functional' },
+      { name: 'Hedge Cutter', quantity: 1, status: 'Functional' },
+      { name: 'Trench', quantity: 1, status: 'Functional' },
+      { name: 'Post Hole Digger', quantity: 1, status: 'Functional' },
+      { name: 'Vehicles', quantity: 4, status: 'Functional' },
+    ],
+    equipmentList: [
+      { name: 'Flame Photometer', quantity: 1, status: 'Functional', location: 'Main Lab' },
+      { name: 'Shaker', quantity: 1, status: 'Functional', location: 'Main Lab' },
+      { name: 'EC Meter', quantity: 2, status: 'Functional', location: 'Main Lab' },
+      { name: 'pH Meter', quantity: 2, status: 'Functional', location: 'Main Lab' },
+      { name: 'Digital Weight Balance', quantity: 1, status: 'Functional', location: 'Main Lab' },
+      { name: 'Analytical Balance', quantity: 1, status: 'Functional', location: 'Main Lab' },
+      { name: 'Hot Plate', quantity: 1, status: 'Functional', location: 'Main Lab' },
+      { name: 'Grinder', quantity: 1, status: 'Functional', location: 'Main Lab' },
+      { name: 'Oven', quantity: 3, status: 'Functional', location: 'Main Lab' },
+      { name: 'Magnetic Hot Plate', quantity: 1, status: 'Functional', location: 'Main Lab' },
+      { name: 'Spectrophotometer', quantity: 1, status: 'Functional', location: 'Main Lab' },
+      { name: 'Muffle Furnace', quantity: 1, status: 'Functional', location: 'Main Lab' },
+      { name: 'Distillation Unit', quantity: 2, status: 'Functional', location: 'Main Lab' },
+      { name: 'Test Tube Shaker', quantity: 1, status: 'Functional', location: 'Main Lab' },
+      { name: 'Autoclave', quantity: 4, status: 'Functional', location: 'Main Lab' },
+      { name: 'Sample Grinder', quantity: 1, status: 'Functional', location: 'Main Lab' },
+      { name: 'Ethylene Generator', quantity: 1, status: 'Functional', location: 'Post-harvest Lab' },
+      { name: 'Digital Balance', quantity: 2, status: 'Functional', location: 'Post-harvest Lab' },
+      { name: 'Digital Burette', quantity: 1, status: 'Functional', location: 'Post-harvest Lab' },
+      { name: 'Digital Refractometer', quantity: 2, status: 'Functional', location: 'Post-harvest Lab' },
+      { name: 'Hot Water Bath', quantity: 1, status: 'Functional', location: 'Post-harvest Lab' },
+      { name: 'Pulp Blender', quantity: 1, status: 'Functional', location: 'Post-harvest Lab' },
+      { name: 'NIR Case', quantity: 1, status: 'Functional', location: 'Post-harvest Lab' },
+      { name: 'Hot Air Dryer', quantity: 1, status: 'Functional', location: 'Post-harvest Lab' },
+      { name: 'Incubator', quantity: 2, status: 'Functional', location: 'Pathology Lab' },
+      { name: 'Small Incubator', quantity: 1, status: 'Functional', location: 'Pathology Lab' },
+      { name: 'Laminar Flow Chamber', quantity: 2, status: 'Functional', location: 'Pathology Lab' },
+      { name: 'Stereoscope', quantity: 1, status: 'Functional', location: 'Entomology Lab' },
+      { name: 'Microscope', quantity: 3, status: 'Functional', location: 'Entomology Lab' },
+      { name: 'Microtome', quantity: 1, status: 'Functional', location: 'Entomology Lab' },
+    ],
+    facilitiesList: [
+      { name: 'Building Area', type: 'Infrastructure', details: '4 Acres' },
+      { name: 'Office Rooms', type: 'Building', capacity: 39 },
+      { name: 'Men Washroom', type: 'Amenity', capacity: 2 },
+      { name: 'Women Washroom', type: 'Amenity', capacity: 1 },
+    ],
+    humanResources: [
+      { position: 'Principal Scientist (Director)', bps: 19, sanctioned: 1, filled: 1, vacant: 0 },
+      { position: 'Principal Scientist (Horticulture)', bps: 19, sanctioned: 1, filled: 0, vacant: 1 },
+      { position: 'Principal Scientist (Microbiology)', bps: 19, sanctioned: 1, filled: 0, vacant: 1 },
+      { position: 'Principal Scientist (Plant Pathology)', bps: 19, sanctioned: 1, filled: 0, vacant: 1 },
+      { position: 'Senior Scientist (Soil Science)', bps: 18, sanctioned: 1, filled: 0, vacant: 1 },
+      { position: 'Senior Scientist (Entomology)', bps: 18, sanctioned: 1, filled: 1, vacant: 0 },
+      { position: 'Senior Scientist (Food Technology)', bps: 18, sanctioned: 1, filled: 0, vacant: 1 },
+      { position: 'Senior Scientist (Horticulture)', bps: 18, sanctioned: 2, filled: 2, vacant: 0 },
+      { position: 'Scientific Officer (Horticulture)', bps: 17, sanctioned: 3, filled: 2, vacant: 1 },
+      { position: 'Scientific Officer (Plant Pathology)', bps: 17, sanctioned: 1, filled: 1, vacant: 0 },
+      { position: 'Scientific Officer (Entomology)', bps: 17, sanctioned: 1, filled: 1, vacant: 0 },
+      { position: 'Scientific Officer (Post-harvest)', bps: 17, sanctioned: 1, filled: 1, vacant: 0 },
+      { position: 'Superintendent', bps: 17, sanctioned: 1, filled: 0, vacant: 1 },
+      { position: 'Assistant', bps: 16, sanctioned: 1, filled: 1, vacant: 0 },
+      { position: 'Stenographer', bps: 15, sanctioned: 1, filled: 1, vacant: 0 },
+      { position: 'Senior Clerk', bps: 14, sanctioned: 1, filled: 1, vacant: 0 },
+      { position: 'Field Assistant', bps: 11, sanctioned: 1, filled: 0, vacant: 1 },
+      { position: 'Junior Clerk', bps: 11, sanctioned: 2, filled: 1, vacant: 1 },
+      { position: 'Laboratory Assistant', bps: 6, sanctioned: 3, filled: 1, vacant: 2 },
+      { position: 'Budder', bps: 5, sanctioned: 4, filled: 0, vacant: 4 },
+      { position: 'Tractor Driver', bps: 5, sanctioned: 1, filled: 0, vacant: 1 },
+      { position: 'Vehicle Driver', bps: 5, sanctioned: 2, filled: 2, vacant: 0 },
+      { position: 'Turbine Operator', bps: 3, sanctioned: 1, filled: 1, vacant: 0 },
+      { position: 'Beldar', bps: 1, sanctioned: 6, filled: 5, vacant: 1 },
+      { position: 'Chowkidar', bps: 1, sanctioned: 6, filled: 6, vacant: 0 },
+      { position: 'Laboratory Attendant', bps: 1, sanctioned: 3, filled: 2, vacant: 1 },
+      { position: 'Naib Qasid', bps: 1, sanctioned: 2, filled: 2, vacant: 0 },
+      { position: 'Sweeper', bps: 1, sanctioned: 1, filled: 1, vacant: 0 },
+    ],
+  },
+  {
+    id: '7',
+    slug: 'agricultural-mechanization-research-institute',
+    name: 'Agricultural Mechanization Research Institute',
+    university: 'Agriculture Department Punjab',
+    imageId: 'agri-13',
+    description: 'Research and development of agricultural machinery and implements to enhance farm mechanization.',
+    address: 'AMRI, Multan',
+    equipmentList: [
+      // Functional Equipment
+      { name: 'Disk Plow', quantity: 1, status: 'Functional' },
+      { name: 'Ditcher', quantity: 1, status: 'Functional' },
+      { name: 'Chisel Plow', quantity: 1, status: 'Functional' },
+      { name: 'Border Disk', quantity: 1, status: 'Functional' },
+      { name: 'Post Hole Digger', quantity: 1, status: 'Functional' },
+      { name: 'Fertilizer Spreader', quantity: 1, status: 'Functional' },
+      { name: 'Rice Straw Shredder', quantity: 1, status: 'Functional' },
+      { name: 'MB Plough 5-tine (Local)', quantity: 1, status: 'Functional' },
+      { name: 'Trencher', quantity: 1, status: 'Functional' },
+      { name: 'Sprinkler Gun', quantity: 1, status: 'Functional' },
+      { name: 'Jip Crane', quantity: 1, status: 'Functional' },
+      { name: 'Wheat Bed Planter', quantity: 1, status: 'Functional' },
+      { name: 'Double Coulter Drill with Fertilizer', quantity: 1, status: 'Functional' },
+      { name: 'Vegetable Seeder', quantity: 2, status: 'Functional' },
+      { name: 'Vegetable Planter', quantity: 2, status: 'Functional' },
+      { name: 'Maize Cob Harvester', quantity: 2, status: 'Functional' },
+      { name: 'Mango Pruner', quantity: 2, status: 'Functional' },
+      { name: 'Hydraulic Trolley', quantity: 1, status: 'Functional' },
+      { name: 'Sugarcane Loader', quantity: 3, status: 'Functional' },
+      { name: 'Sugarcane Crusher', quantity: 2, status: 'Functional' },
+      { name: 'Tadder (Class)', quantity: 1, status: 'Functional' },
+      { name: 'Rack (Class)', quantity: 1, status: 'Functional' },
+      { name: 'Silage Bailer', quantity: 2, status: 'Functional' },
+      { name: 'Onion Harvester', quantity: 2, status: 'Functional' },
+      { name: 'Hay Bailer', quantity: 3, status: 'Functional' },
+      { name: 'Hay Buster Drill (Imported)', quantity: 1, status: 'Functional' },
+      { name: 'Hay Buster Drill (Local)', quantity: 3, status: 'Functional' },
+      { name: 'Rigger Vegetable', quantity: 1, status: 'Functional' },
+      { name: 'Cotton Ball Stripper', quantity: 1, status: 'Functional' },
+      { name: 'Fruit Picker', quantity: 2, status: 'Functional' },
+      { name: 'Rotary Disk Harrow', quantity: 1, status: 'Functional' },
+      { name: 'Wheat Bed & Farrow Drill', quantity: 1, status: 'Functional' },
+      { name: 'Bud Cutter', quantity: 1, status: 'Functional' },
+      { name: 'Wheat Wrapper', quantity: 1, status: 'Functional' },
+      { name: 'AMRI Super Seeder', quantity: 1, status: 'Functional' },
+      { name: 'Walk Behind Reaper', quantity: 1, status: 'Functional' },
+      { name: 'ULV Sprayer', quantity: 1, status: 'Functional' },
+      { name: 'Jecto/Canon Sprayer', quantity: 1, status: 'Functional' },
+      { name: 'Vegetable Nursery Transplanter with Ridger', quantity: 2, status: 'Functional' },
+      { name: 'Rotary Tillage and Fertilizer Seeder', quantity: 1, status: 'Functional' },
+      { name: 'Inter Tillage Weeder (Cultivator)', quantity: 2, status: 'Functional' },
+      { name: 'Trimmer', quantity: 1, status: 'Functional' },
+      { name: 'Orchard Sprayer', quantity: 1, status: 'Functional' },
+      { name: 'Speed Cultivator', quantity: 1, status: 'Functional' },
+      { name: 'Sugarcane Base Cutter', quantity: 1, status: 'Functional' },
+      { name: 'Rice Nursery Raising Machine', quantity: 1, status: 'Functional' },
+      { name: 'Hot Water Treatment Plant', quantity: 1, status: 'Functional' },
+      { name: 'Garlic Weeder (Local)', quantity: 1, status: 'Functional' },
+      { name: 'Rotary Slasher (Sugarcane)', quantity: 1, status: 'Functional' },
+      { name: 'Disc Harrow', quantity: 2, status: 'Functional' },
+      { name: 'Cotton Root Digger', quantity: 2, status: 'Functional' },
+      { name: 'Cotton Stock Shredder', quantity: 1, status: 'Functional' },
+      { name: 'Cultivator (5-tine)', quantity: 1, status: 'Functional' },
+      { name: 'MB Plough 3-bottom (Imported)', quantity: 1, status: 'Functional' },
+      { name: 'MB Plough 3-bottom (Local)', quantity: 1, status: 'Functional' },
+      { name: 'MB Plough 2-bottom (Imported)', quantity: 1, status: 'Functional' },
+      // Not Functional Equipment
+      { name: 'Rice Transplanter', quantity: 1, status: 'Needs Repair' },
+      { name: 'Sub Soiler', quantity: 1, status: 'Needs Repair' },
+      { name: 'Rotary Slasher', quantity: 1, status: 'Needs Repair' },
+      { name: 'Spring Tine Cultivator', quantity: 1, status: 'Needs Repair' },
+      { name: 'Sugarcane Set Cutter', quantity: 1, status: 'Needs Repair' },
+      { name: 'Self-Leveling Boom Sprayer', quantity: 1, status: 'Needs Repair' },
+      { name: 'Bed Shipper Planter', quantity: 1, status: 'Needs Repair' },
+      { name: 'Granular Distributor', quantity: 1, status: 'Needs Repair' },
+      { name: 'AMRI Rotary Ditcher', quantity: 1, status: 'Needs Repair' },
+      { name: 'Para Plough', quantity: 1, status: 'Needs Repair' },
+      { name: 'Wheat Straw Bailer', quantity: 2, status: 'Needs Repair' },
+      { name: 'Sugarcane Harvester', quantity: 1, status: 'Needs Repair' },
+      { name: 'Chopper Blower', quantity: 1, status: 'Needs Repair' },
+      { name: 'Garlic Harvester', quantity: 4, status: 'Needs Repair' },
+      { name: 'Fodder Cutter/Wrapper', quantity: 2, status: 'Needs Repair' },
+      { name: 'Forage Harvester', quantity: 1, status: 'Needs Repair' },
+      { name: 'Multicrop Planter', quantity: 2, status: 'Needs Repair' },
+      { name: 'White Fly Shaker', quantity: 1, status: 'Needs Repair' },
+      { name: 'Garlic Planter', quantity: 2, status: 'Needs Repair' },
+      { name: 'Laser Land Leveler', quantity: 1, status: 'Needs Repair' },
+    ],
+  },
+  {
+    id: '8',
+    slug: 'mnsuam-estate',
+    name: 'MNSUAM Estate & Facilities',
+    university: 'MNS University of Agriculture, Multan',
+    imageId: 'agri-8',
+    description: 'Central facilities and meeting halls available at MNSUAM for conferences, training, and research activities.',
+    facilitiesList: [
+      { name: 'Syndicate Hall', type: 'Meeting Room', capacity: 50, details: 'Admin Block' },
+      { name: 'Committee Room', type: 'Meeting Room', capacity: 20, details: 'Admin Block' },
+      { name: 'Lecture Hall 110', type: 'Lecture Hall', capacity: 150, details: 'Academic Block' },
+      { name: 'Lecture Hall 132', type: 'Lecture Hall', capacity: 96, details: 'Academic Block' },
+      { name: 'Computer Labs', type: 'Laboratory', capacity: 5, details: 'Academic Block - 5 Labs' },
+      { name: 'Training Hall', type: 'Training', capacity: 80, details: 'S.T.I. Library - 40 persons, extendable to 80' },
+      { name: 'Meeting Room', type: 'Meeting Room', capacity: 15, details: 'Genome Centre / UNESCO Chair' },
+      { name: 'Sybrid Hall', type: 'Training', capacity: 30, details: 'Graduate Block / A Block' },
+      { name: 'Executive Hall-I', type: 'Meeting Room', capacity: 35, details: 'Graduate Block' },
+      { name: 'Lecture Hall', type: 'Lecture Hall', capacity: 35, details: 'Graduate Block' },
+      { name: 'ORIC Meeting Hall', type: 'Meeting Room', capacity: 30, details: 'Graduate Block' },
+      { name: 'QEC Meeting Hall', type: 'Meeting Room', capacity: 12, details: 'Graduate Block' },
+    ],
+  },
+  {
+    id: '9',
     slug: 'horticulture',
     name: 'Horticulture',
-    university: 'PMAS Arid Agriculture University, Rawalpindi',
+    university: 'Agriculture Department Punjab',
     imageId: 'agri-3',
     description: 'The art and science of garden cultivation and management, including fruits, vegetables, nuts, seeds, herbs, and flowers.',
   },
   {
-    id: '4',
+    id: '10',
     slug: 'plant-breeding-and-genetics',
     name: 'Plant Breeding and Genetics',
-    university: 'University of Agriculture, Faisalabad',
+    university: 'MNS University of Agriculture, Multan',
     imageId: 'agri-4',
     description: 'The art and science of changing the traits of plants in order to produce desired characteristics.',
   },
   {
-    id: '5',
-    slug: 'soil-and-environmental-sciences',
-    name: 'Soil and Environmental Sciences',
-    university: 'MNS University of Agriculture, Multan',
-    imageId: 'agri-5',
-    description: 'Studies the properties of soil and its relationship with the environment and living organisms.',
-  },
-  {
-    id: '6',
-    slug: 'entomology',
-    name: 'Entomology',
-    university: 'PMAS Arid Agriculture University, Rawalpindi',
-    imageId: 'agri-6',
-    description: 'The scientific study of insects, a branch of zoology.',
-  },
-  {
-    id: '7',
+    id: '11',
     slug: 'plant-pathology',
     name: 'Plant Pathology',
-    university: 'University of Agriculture, Faisalabad',
+    university: 'MNS University of Agriculture, Multan',
     imageId: 'agri-7',
     description: 'The scientific study of diseases in plants caused by pathogens and environmental conditions.',
   },
   {
-    id: '8',
+    id: '12',
     slug: 'forestry-and-range-management',
     name: 'Forestry and Range Management',
     university: 'MNS University of Agriculture, Multan',
@@ -126,44 +503,12 @@ export const departments: Department[] = [
     description: 'Focuses on the management of forest and rangeland ecosystems for sustainability and resource utilization.',
   },
   {
-    id: '9',
-    slug: 'agricultural-and-resource-economics',
-    name: 'Agricultural & Resource Economics',
-    university: 'University of Agriculture, Faisalabad',
-    imageId: 'agri-9',
-    description: 'An applied field of economics concerned with the application of economic theory in optimizing the production and distribution of food.',
-  },
-  {
-    id: '10',
+    id: '13',
     slug: 'animal-science',
     name: 'Animal Science',
-    university: 'PMAS Arid Agriculture University, Rawalpindi',
+    university: 'MNS University of Agriculture, Multan',
     imageId: 'agri-10',
     description: 'Describes the science of managing, breeding, and raising livestock.',
-  },
-  {
-    id: '11',
-    slug: 'veterinary-medicine',
-    name: 'Veterinary Medicine',
-    university: 'University of Veterinary and Animal Sciences, Lahore',
-    imageId: 'agri-11',
-    description: 'The branch of medicine that deals with the prevention, diagnosis and treatment of disease in animals.',
-  },
-  {
-    id: '12',
-    slug: 'fisheries-and-aquaculture',
-    name: 'Fisheries and Aquaculture',
-    university: 'University of Veterinary and Animal Sciences, Lahore',
-    imageId: 'agri-12',
-    description: 'The science of breeding, rearing, and harvesting fish, shellfish, and aquatic plants.',
-  },
-  {
-    id: '13',
-    slug: 'agricultural-engineering',
-    name: 'Agricultural Engineering',
-    university: 'University of Agriculture, Faisalabad',
-    imageId: 'agri-13',
-    description: 'The engineering discipline that applies engineering science and technology to agricultural production and processing.',
   },
   {
     id: '14',
@@ -175,81 +520,10 @@ export const departments: Department[] = [
   },
   {
     id: '15',
-    slug: 'dairy-technology',
-    name: 'Dairy Technology',
-    university: 'University of Veterinary and Animal Sciences, Lahore',
-    imageId: 'agri-15',
-    description: 'Deals with the processing of milk and milk products.',
-  },
-  {
-    id: '16',
-    slug: 'environmental-sciences',
-    name: 'Environmental Sciences',
-    university: 'PMAS Arid Agriculture University, Rawalpindi',
-    imageId: 'agri-16',
-    description: 'An interdisciplinary academic field that integrates physical, biological and information sciences.',
-  },
-  {
-    id: '17',
-    slug: 'rural-sociology',
-    name: 'Rural Sociology',
-    university: 'University of Agriculture, Faisalabad',
-    imageId: 'agri-17',
-    description: 'A field of sociology traditionally associated with the study of social structure and conflict in rural areas.',
-  },
-  {
-    id: '18',
     slug: 'water-management',
     name: 'Water Management',
     university: 'MNS University of Agriculture, Multan',
     imageId: 'agri-18',
     description: 'The management of water resources for its efficient use, particularly in agriculture.',
   },
-  {
-    id: '19',
-    slug: 'floriculture-research-sub-station',
-    name: 'Floriculture Research Sub-station',
-    university: 'Horticultural Research Sub-station, Multan',
-    imageId: 'agri-19',
-    description: 'A sub-station focused on floriculture and landscaping research.',
-    contact: {
-      focalPerson: 'Dr. Muhammad Muzamil Ijaz',
-      email: 'muzamil.ijaz243@gmail.com',
-    },
-    equipment: `
-      Farm Machinery/Equipment:
-      1 Power sprayer (1 unit)
-      1 Brush cutter (1 unit)
-      1 Mini rotavator (1 unit)
-
-      Lab Machinery/Equipment:
-      1 Digital balance
-      1 Hydro distillation unit
-    `,
-    facilities: `
-      Land resource:
-      Total area: 7.50 acre
-      Cultivated area: 6.5 acre
-      Non-cultivated area (Paths, buildings, water channels): 1.0 acre
-
-      Building details:
-      Administrative office: 3.5 marla
-
-      Human Resources:
-      - Assistant Horticulturist (BPS 18): 1
-      - Assistant Research Officer (BPS 17): 1
-      - Senior Clerk (BPS 14): 1
-      - Budder (BPS 8): 2
-      - Jeep Driver (BPS 6): 1
-      - Tractor Driver (BPS 8): 1
-      - Mali (BPS 5): 2
-      - Beldars (BPS 1,4,5): 7
-      - Chowkidar (BPS 2,1): 2
-      - Naib Qasid (BPS 5): 1
-      - Sweeper (BPS 2): 1
-      Total Staff: 20
-    `,
-  },
 ];
-
-    
