@@ -1,3 +1,112 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "agri-1",
+      "description": "A modern food science laboratory with equipment.",
+      "imageUrl": "https://images.unsplash.com/photo-1675774644393-7bcfa424dec7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8Zm9vZCUyMGxhYm9yYXRvcnl8ZW58MHx8fHwxNzY0MTMwMDc2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "food laboratory"
+    },
+    {
+      "id": "agri-2",
+      "description": "A vast field of wheat under a clear blue sky.",
+      "imageUrl": "https://images.unsplash.com/photo-1562956509-4e2fbef3afcc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHx3aGVhdCUyMGZpZWxkfGVufDB8fHx8MTc2NDEyMTY2OHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "wheat field"
+    },
+    {
+      "id": "agri-3",
+      "description": "A colorful arrangement of fresh fruits and vegetables.",
+      "imageUrl": "https://images.unsplash.com/photo-1614173417106-242690007604?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxmcmVzaCUyMHByb2R1Y2V8ZW58MHx8fHwxNzY0MDYwMDczfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "fresh produce"
+    },
+    {
+      "id": "agri-4",
+      "description": "A scientist examining plant samples in a greenhouse.",
+      "imageUrl": "https://images.unsplash.com/photo-1623839511121-a729c1bbf8ca?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxwbGFudCUyMGdlbmV0aWNzfGVufDB8fHx8MTc2NDEzMDA3Nnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "plant genetics"
+    },
+    {
+      "id": "agri-5",
+      "description": "A cross-section of soil layers showing different horizons.",
+      "imageUrl": "https://images.unsplash.com/photo-1724144599347-14c8fba002bc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxzb2lsJTIwbGF5ZXJzfGVufDB8fHx8MTc2NDEzMDA3Nnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "soil layers"
+    },
+    {
+      "id": "agri-6",
+      "description": "A close-up of a bee on a flower.",
+      "imageUrl": "https://images.unsplash.com/photo-1730670739676-8add533e665c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxpbnNlY3QlMjBwb2xsaW5hdGlvbnxlbnwwfHx8fDE3NjQxMzAwNzZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "insect pollination"
+    },
+    {
+      "id": "agri-7",
+      "description": "Leaves of a plant showing signs of a disease.",
+      "imageUrl": "https://images.unsplash.com/photo-1658717798838-53ea7bbfcd18?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxwbGFudCUyMGRpc2Vhc2V8ZW58MHx8fHwxNzY0MDY2NTAxfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "plant disease"
+    },
+    {
+      "id": "agri-8",
+      "description": "A dense forest with tall trees.",
+      "imageUrl": "https://images.unsplash.com/photo-1638961852415-9f5d4470e4b5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxmb3Jlc3QlMjBtYW5hZ2VtZW50fGVufDB8fHx8MTc2NDEzMDA3Nnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "forest management"
+    },
+    {
+      "id": "agri-9",
+      "description": "A farmer's market with stalls selling local produce.",
+      "imageUrl": "https://images.unsplash.com/photo-1591586116988-62fe65164f8d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxmYXJtZXJzJTIwbWFya2V0fGVufDB8fHx8MTc2NDA3MTUxMXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "farmers market"
+    },
+    {
+      "id": "agri-10",
+      "description": "A herd of cows grazing in a pasture.",
+      "imageUrl": "https://images.unsplash.com/photo-1651663810994-cc2d3411cfe1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxncmF6aW5nJTIwY293c3xlbnwwfHx8fDE3NjQxMzAwNzZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "grazing cows"
+    },
+    {
+      "id": "agri-11",
+      "description": "A veterinarian examining a small animal.",
+      "imageUrl": "https://images.unsplash.com/photo-1602052577122-f73b9710adba?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHx2ZXRlcmluYXJ5JTIwY2xpbmljfGVufDB8fHx8MTc2NDA2OTY2NXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "veterinary clinic"
+    },
+    {
+      "id": "agri-12",
+      "description": "A large fish farm with multiple ponds.",
+      "imageUrl": "https://images.unsplash.com/photo-1510018572596-e40e2619b412?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxmaXNoJTIwZmFybXxlbnwwfHx8fDE3NjQxMzAwNzZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "fish farm"
+    },
+    {
+      "id": "agri-13",
+      "description": "A modern tractor working in a field.",
+      "imageUrl": "https://images.unsplash.com/photo-1507662228758-08d030c4820b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxmYXJtJTIwdHJhY3RvcnxlbnwwfHx8fDE3NjQwNjcxMTR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "farm tractor"
+    },
+    {
+      "id": "agri-14",
+      "description": "A scientist working with DNA samples in a lab.",
+      "imageUrl": "https://images.unsplash.com/photo-1668600373138-31804f1e6455?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxiaW90ZWNobm9sb2d5JTIwbGFifGVufDB8fHx8MTc2NDEzMDA3Nnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "biotechnology lab"
+    },
+    {
+      "id": "agri-15",
+      "description": "Stainless steel vats in a modern dairy factory.",
+      "imageUrl": "https://images.unsplash.com/photo-1579784340946-55a7bbd51d57?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxkYWlyeSUyMGZhY3Rvcnl8ZW58MHx8fHwxNzY0MTMwMDc2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "dairy factory"
+    },
+    {
+      "id": "agri-16",
+      "description": "A pristine lake surrounded by green hills.",
+      "imageUrl": "https://images.unsplash.com/photo-1558119046-bf5375f0a4af?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxjbGVhbiUyMGVudmlyb25tZW50fGVufDB8fHx8MTc2NDEzMDA3Nnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "clean environment"
+    },
+    {
+      "id": "agri-17",
+      "description": "A community meeting in a rural village setting.",
+      "imageUrl": "https://images.unsplash.com/photo-1761839257661-c2392c65ea72?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MXwxfHNlYXJjaHwxfHxydXJhbCUyMGNvbW11bml0eXxlbnwwfHx8fDE3NjQxMzAwNzZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "rural community"
+    },
+    {
+      "id": "agri-18",
+      "description": "An irrigation system watering a large farm field.",
+      "imageUrl": "https://images.unsplash.com/photo-1758414089320-dac72d347fca?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8ZmFybSUyMGlycmlnYXRpb258ZW58MHx8fHwxNzY0MDY2NTAxfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "farm irrigation"
+    }
+  ]
 }
