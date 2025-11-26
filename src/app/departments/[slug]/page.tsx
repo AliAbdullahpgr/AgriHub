@@ -37,10 +37,20 @@ type Facility = {
   capacity?: number;
 };
 
+type HumanResource = {
+  name: string;
+  bps: string;
+  sanctioned: string;
+  inPosition: string;
+  vacant: string;
+  total: string;
+};
+
+
 // Function to parse facilities from text
 const parseFacilities = (text: string): Facility[] => {
   const facilities: Facility[] = [];
-  const lines = text.split('\n').filter((line) => line.trim() !== '');
+  const lines = text.split('\n').filter((line) => line.trim() !== '' && !line.toLowerCase().includes('human resources'));
 
   lines.forEach((line) => {
     const match = line.match(
@@ -52,11 +62,10 @@ const parseFacilities = (text: string): Facility[] => {
         capacity: parseInt(match[2], 10),
       });
     } else if (!line.toLowerCase().includes('following facilities')) {
-        // Simple case for labs without capacity
         const labMatch = line.match(/^\d+-\s*(.*?)\s*$/);
         if(labMatch) {
             facilities.push({ name: labMatch[1].trim()});
-        } else if (!line.match(/^\s*$/) && !line.match(/block/i) && !line.match(/S\.T\.I\./i) && !line.match(/Genome/i)) {
+        } else if (!line.match(/^\s*$/) && !line.match(/block/i) && !line.match(/S\.T\.I\./i) && !line.match(/Genome/i) && !line.includes('Total area') && !line.includes('Cultivated area') && !line.includes('Non-cultivated area') && !line.includes('Building details') && !line.includes('Administrative office')) {
             const name = line.replace(/^\d+[\.\-]?\s*/, '').trim();
             if (name) facilities.push({ name });
         }
@@ -64,6 +73,49 @@ const parseFacilities = (text: string): Facility[] => {
   });
 
   return facilities;
+};
+
+const parseHumanResources = (text: string): HumanResource[] => {
+  const resources: HumanResource[] = [];
+  const lines = text.split('\n');
+  let startParsing = false;
+  
+  for (const line of lines) {
+    if (line.includes('Human Resources')) {
+      startParsing = true;
+      continue;
+    }
+    if (!startParsing || !line.trim() || line.includes('Sr. #')) continue;
+    if (line.includes('Total Staff')) break;
+
+    const parts = line.split(/\s{2,}|(?<=\d)\s+(?=[A-Z])|(?<=[A-Za-z])\s+(?=\d)|(?<=\S)\s+(?=\-)/).filter(p => p.trim() && p.trim() !== '-');
+    
+    // Clean up parts by removing serial numbers and trimming
+    const cleanedParts = parts.map(p => p.replace(/^\d+[\s\t]*/, '').trim()).filter(Boolean);
+
+    if(cleanedParts.length >= 5) {
+      // Handles cases like "Beldars	1,4,5	7	7	-	7"
+      let nameIndex = 0;
+      let bpsIndex = 1;
+      let sanctionedIndex = 2;
+      let inPositionIndex = 3;
+      let vacantIndex = -1; // Not always present
+      let totalIndex = 4;
+
+      if (cleanedParts.length === 5) {
+         resources.push({
+          name: cleanedParts[nameIndex],
+          bps: cleanedParts[bpsIndex],
+          sanctioned: cleanedParts[sanctionedIndex],
+          inPosition: cleanedParts[inPositionIndex],
+          vacant: '-',
+          total: cleanedParts[totalIndex],
+        });
+      }
+    }
+  }
+
+  return resources;
 };
 
 
@@ -99,6 +151,8 @@ export default function DepartmentPage() {
   }
   
   const facilities = department?.facilities ? parseFacilities(department.facilities) : [];
+  const humanResources = department?.facilities ? parseHumanResources(department.facilities) : [];
+
 
   const equipmentStatusData = equipment.reduce((acc, item) => {
     const status = item.status || 'Unknown';
@@ -237,6 +291,42 @@ export default function DepartmentPage() {
                   </li>
                 ))}
               </ul>
+            </CardContent>
+          </Card>
+        )}
+
+        {humanResources.length > 0 && (
+          <Card className="md:col-span-2 lg:col-span-3">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Users className="text-primary" /> Human Resources
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Post</TableHead>
+                    <TableHead>BPS</TableHead>
+                    <TableHead>Sanctioned</TableHead>
+                    <TableHead>In Position</TableHead>
+                    <TableHead>Vacant</TableHead>
+                    <TableHead>Total</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {humanResources.map((resource, index) => (
+                    <TableRow key={index}>
+                      <TableCell className="font-medium">{resource.name}</TableCell>
+                      <TableCell>{resource.bps}</TableCell>
+                      <TableCell>{resource.sanctioned}</TableCell>
+                      <TableCell>{resource.inPosition}</TableCell>
+                      <TableCell>{resource.vacant}</TableCell>
+                      <TableCell>{resource.total}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </CardContent>
           </Card>
         )}
