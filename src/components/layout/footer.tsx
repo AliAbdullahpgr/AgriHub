@@ -1,13 +1,37 @@
-import { Leaf } from 'lucide-react';
+import { Building, Phone } from 'lucide-react';
 
 export function Footer() {
   return (
-    <footer className="border-t">
-      <div className="container flex flex-col items-center justify-between gap-4 py-10 md:h-24 md:flex-row md:py-0">
-        <div className="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
-          <Leaf className="h-6 w-6 text-primary" />
-          <p className="text-center text-sm leading-loose md:text-left text-muted-foreground">
-            Built for AgriData Hub. &copy; {new Date().getFullYear()} All rights reserved.
+    <footer className="bg-primary text-primary-foreground">
+      <div className="container py-12">
+        <div className="grid md:grid-cols-3 gap-8 text-center md:text-left">
+          <div>
+            <h3 className="font-bold text-lg mb-2 font-headline">
+              Agriculture Complex, South Punjab Multan
+            </h3>
+            <div className="space-y-2 text-primary-foreground/80">
+              <p className="flex items-center justify-center md:justify-start gap-2">
+                <Building size={16} /> Old Shujabad Road, Multan, Pakistan
+              </p>
+              <p className="flex items-center justify-center md:justify-start gap-2">
+                <Phone size={16} /> +92 61 920 1601
+              </p>
+            </div>
+          </div>
+          <div>
+            <h3 className="font-bold text-lg mb-2 font-headline">
+              Connect With Us
+            </h3>
+            <p className="text-primary-foreground/80">
+              Follow us on social media for updates and news.
+            </p>
+            {/* Social Icons would go here */}
+          </div>
+        </div>
+        <div className="border-t border-primary-foreground/20 mt-8 pt-6 text-center text-sm text-primary-foreground/60">
+          <p>
+            © {new Date().getFullYear()} Agriculture Complex, South Punjab Multan. All rights
+            reserved.
           </p>
         </div>
       </div>

@@ -24,11 +24,11 @@ export function Header() {
           <Link href="/" className="mr-6 flex items-center space-x-2">
             <Leaf className="h-6 w-6 text-primary" />
             <span className="hidden font-bold sm:inline-block font-headline">
-              AgriData Hub
+              Agriculture Complex
             </span>
           </Link>
           <nav className="flex items-center space-x-6 text-sm font-medium">
-            <NavLink href="/">Departments</NavLink>
+            <NavLink href="/">Home</NavLink>
             <NavLink href="/data-parser">Data Parser</NavLink>
           </nav>
         </div>
@@ -48,10 +48,10 @@ export function Header() {
             <div className="flex flex-col space-y-4">
                 <Link href="/" className="mr-6 flex items-center space-x-2">
                     <Leaf className="h-6 w-6 text-primary" />
-                    <span className="font-bold font-headline">AgriData Hub</span>
+                    <span className="font-bold font-headline">Agriculture Complex</span>
                 </Link>
                 <nav className="flex flex-col space-y-2 text-lg font-medium">
-                    <NavLink href="/">Departments</NavLink>
+                    <NavLink href="/">Home</NavLink>
                     <NavLink href="/data-parser">Data Parser</NavLink>
                 </nav>
             </div>
@@ -59,7 +59,7 @@ export function Header() {
         </Sheet>
         
         <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
-          <div className="w-full flex-1 md:w-auto md:flex-none">
+           <div className="w-full flex-1 md:w-auto md:flex-none">
             {/* You can add a search bar here if needed */}
           </div>
           <nav className="hidden md:flex items-center">
