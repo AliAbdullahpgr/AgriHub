@@ -1,6 +1,6 @@
 'use client';
 
-import { notFound } from 'next/navigation';
+import { notFound, useParams } from 'next/navigation';
 import { departments } from '@/data/departments';
 import { parseEquipmentDetails } from '@/ai/flows/parse-equipment-details';
 import type { Equipment } from '@/lib/types';
@@ -30,7 +30,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { Mail, User, Building, Users } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 
 type Facility = {
   name: string;
@@ -67,12 +67,12 @@ const parseFacilities = (text: string): Facility[] => {
 };
 
 
-export default function DepartmentPage({
-  params,
-}: {
-  params: { slug: string };
-}) {
-  const department = departments.find((d) => d.slug === params.slug);
+export default function DepartmentPage() {
+  const params = useParams();
+  const slug = typeof params.slug === 'string' ? params.slug : '';
+  
+  const department = useMemo(() => departments.find((d) => d.slug === slug), [slug]);
+
   const [equipment, setEquipment] = useState<Equipment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -94,11 +94,11 @@ export default function DepartmentPage({
     }
   }, [department]);
 
-  if (!department) {
+  if (!isLoading && !department) {
     notFound();
   }
   
-  const facilities = department.facilities ? parseFacilities(department.facilities) : [];
+  const facilities = department?.facilities ? parseFacilities(department.facilities) : [];
 
   const equipmentStatusData = equipment.reduce((acc, item) => {
     const status = item.status || 'Unknown';
@@ -111,6 +111,17 @@ export default function DepartmentPage({
     return acc;
   }, [] as { name: string; count: number }[]);
 
+  if (isLoading) {
+    return (
+        <div className="container mx-auto px-4 py-8">
+            <p>Loading department details...</p>
+        </div>
+    )
+  }
+  
+  if (!department) {
+    return null;
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
