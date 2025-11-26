@@ -1,3 +1,5 @@
+'use client';
+
 import { notFound } from 'next/navigation';
 import { departments } from '@/data/departments';
 import { parseEquipmentDetails } from '@/ai/flows/parse-equipment-details';
@@ -28,18 +30,12 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { Mail, User, Building, Users } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 type Facility = {
   name: string;
   capacity?: number;
 };
-
-// Generate static paths for all departments at build time
-export function generateStaticParams() {
-  return departments.map((dept) => ({
-    slug: dept.slug,
-  }));
-}
 
 // Function to parse facilities from text
 const parseFacilities = (text: string): Facility[] => {
@@ -71,25 +67,35 @@ const parseFacilities = (text: string): Facility[] => {
 };
 
 
-export default async function DepartmentPage({
+export default function DepartmentPage({
   params,
 }: {
   params: { slug: string };
 }) {
   const department = departments.find((d) => d.slug === params.slug);
+  const [equipment, setEquipment] = useState<Equipment[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (department?.equipment) {
+      setIsLoading(true);
+      parseEquipmentDetails({ text: department.equipment })
+        .then(parsedEquipment => {
+          setEquipment(parsedEquipment);
+        })
+        .catch(error => {
+          console.error('Failed to parse equipment details:', error);
+        })
+        .finally(() => {
+            setIsLoading(false);
+        });
+    } else {
+        setIsLoading(false);
+    }
+  }, [department]);
 
   if (!department) {
     notFound();
-  }
-
-  let equipment: Equipment[] = [];
-  if (department.equipment) {
-    try {
-      equipment = await parseEquipmentDetails({ text: department.equipment });
-    } catch (error) {
-      console.error('Failed to parse equipment details:', error);
-      // Handle error gracefully, maybe show a message to the user
-    }
   }
   
   const facilities = department.facilities ? parseFacilities(department.facilities) : [];
@@ -143,12 +149,15 @@ export default async function DepartmentPage({
           </Card>
         )}
 
-        {equipment.length > 0 && (
+        {(isLoading || equipment.length > 0) && (
             <Card className="md:col-span-2 lg:col-span-3">
                 <CardHeader>
                     <CardTitle>Lab Equipment Inventory</CardTitle>
                 </CardHeader>
                 <CardContent>
+                  {isLoading ? (
+                    <p>Loading equipment...</p>
+                  ) : (
                     <Table>
                         <TableHeader>
                         <TableRow>
@@ -167,11 +176,12 @@ export default async function DepartmentPage({
                         ))}
                         </TableBody>
                     </Table>
+                  )}
                 </CardContent>
             </Card>
         )}
         
-        {equipmentStatusData.length > 0 && (
+        {(!isLoading && equipmentStatusData.length > 0) && (
             <Card className="md:col-span-2 lg:col-span-2">
                 <CardHeader>
                     <CardTitle>Equipment Status Overview</CardTitle>
