@@ -165,6 +165,14 @@ export default function DepartmentPage() {
     return acc;
   }, [] as { name: string; count: number }[]);
 
+  const humanResourcesChartData = humanResources.map(resource => ({
+    name: resource.name,
+    Sanctioned: parseInt(resource.sanctioned, 10) || 0,
+    'In Position': parseInt(resource.inPosition, 10) || 0,
+    Vacant: parseInt(resource.vacant, 10) || 0,
+  })).filter(d => d.Sanctioned > 0 || d['In Position'] > 0);
+
+
   if (isLoading) {
     return (
         <div className="container mx-auto px-4 py-8">
@@ -330,6 +338,30 @@ export default function DepartmentPage() {
             </CardContent>
           </Card>
         )}
+        
+        {humanResourcesChartData.length > 0 && (
+          <Card className="md:col-span-3">
+            <CardHeader>
+              <CardTitle>Human Resources Staffing</CardTitle>
+              <CardDescription>Comparison of sanctioned vs. in-position posts.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={400}>
+                <BarChart data={humanResourcesChartData} margin={{ top: 5, right: 20, left: 10, bottom: 90 }}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" angle={-45} textAnchor="end" interval={0} height={100} />
+                  <YAxis allowDecimals={false} />
+                  <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--background))', border: '1px solid hsl(var(--border))' }} />
+                  <Legend />
+                  <Bar dataKey="Sanctioned" fill="hsl(var(--chart-2))" />
+                  <Bar dataKey="In Position" fill="hsl(var(--primary))" />
+                  <Bar dataKey="Vacant" fill="hsl(var(--destructive))" />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        )}
+
 
         {!department.contact && !department.equipment && !department.facilities && (
           <Card className="col-span-full">
