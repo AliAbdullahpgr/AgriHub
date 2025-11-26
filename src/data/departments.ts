@@ -205,4 +205,51 @@ export const departments: Department[] = [
     imageId: 'agri-18',
     description: 'The management of water resources for its efficient use, particularly in agriculture.',
   },
+  {
+    id: '19',
+    slug: 'floriculture-research-sub-station',
+    name: 'Floriculture Research Sub-station',
+    university: 'Horticultural Research Sub-station, Multan',
+    imageId: 'agri-19',
+    description: 'A sub-station focused on floriculture and landscaping research.',
+    contact: {
+      focalPerson: 'Dr. Muhammad Muzamil Ijaz',
+      email: 'muzamil.ijaz243@gmail.com',
+    },
+    equipment: `
+      Farm Machinery/Equipment:
+      1 Power sprayer (1 unit)
+      1 Brush cutter (1 unit)
+      1 Mini rotavator (1 unit)
+
+      Lab Machinery/Equipment:
+      1 Digital balance
+      1 Hydro distillation unit
+    `,
+    facilities: `
+      Land resource:
+      Total area: 7.50 acre
+      Cultivated area: 6.5 acre
+      Non-cultivated area (Paths, buildings, water channels): 1.0 acre
+
+      Building details:
+      Administrative office: 3.5 marla
+
+      Human Resources:
+      - Assistant Horticulturist (BPS 18): 1
+      - Assistant Research Officer (BPS 17): 1
+      - Senior Clerk (BPS 14): 1
+      - Budder (BPS 8): 2
+      - Jeep Driver (BPS 6): 1
+      - Tractor Driver (BPS 8): 1
+      - Mali (BPS 5): 2
+      - Beldars (BPS 1,4,5): 7
+      - Chowkidar (BPS 2,1): 2
+      - Naib Qasid (BPS 5): 1
+      - Sweeper (BPS 2): 1
+      Total Staff: 20
+    `,
+  },
 ];
+
+    

@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { institutes } from '@/data/institutes';
+import { departments } from '@/data/departments';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import {
   Card,
@@ -10,7 +10,6 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Building, Phone } from 'lucide-react';
 
 export default function Home() {
   const getImage = (imageId: string) => {
@@ -79,18 +78,18 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Research Institutes Section */}
+        {/* Research Institutes & Departments Section */}
         <section className="py-16 bg-background">
           <div className="container">
             <h2 className="text-3xl font-bold text-center mb-10 font-headline">
-              Research Institutes
+              Departments & Institutes
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-              {institutes.map((inst) => {
-                const image = getImage(inst.imageId);
+              {departments.map((dept) => {
+                const image = getImage(dept.imageId);
                 return (
                   <Card
-                    key={inst.id}
+                    key={dept.id}
                     className="h-full overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 flex flex-col"
                   >
                     <CardHeader>
@@ -98,7 +97,7 @@ export default function Home() {
                         <div className="relative h-40 w-full mb-4">
                           <Image
                             src={image.imageUrl}
-                            alt={inst.name}
+                            alt={dept.name}
                             fill
                             className="object-cover rounded-t-lg"
                             data-ai-hint="research facility"
@@ -106,12 +105,13 @@ export default function Home() {
                         </div>
                       )}
                       <CardTitle className="font-headline text-lg leading-tight h-12">
-                        {inst.name}
+                        {dept.name}
                       </CardTitle>
+                      <CardDescription>{dept.university}</CardDescription>
                     </CardHeader>
                     <CardContent className="flex-grow flex flex-col justify-end">
                       <Button asChild className="w-full mt-auto">
-                        <Link href={`/institutes/${inst.slug}`}>Learn More</Link>
+                        <Link href={`/departments/${dept.slug}`}>Learn More</Link>
                       </Button>
                     </CardContent>
                   </Card>
@@ -124,3 +124,5 @@ export default function Home() {
     </div>
   );
 }
+
+    
